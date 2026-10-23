@@ -1,8 +1,10 @@
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
+    // @ts-ignore
     agentFeedback: true,
   },
   cacheComponents: true,
@@ -14,6 +16,15 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  output: "standalone",
+  webpack: (config, { dev }) => {
+    if (dev && process.env.DISABLE_HMR === "true") {
+      config.watchOptions = {
+        ignored: /.*/,
+      };
+    }
+    return config;
   },
 };
 

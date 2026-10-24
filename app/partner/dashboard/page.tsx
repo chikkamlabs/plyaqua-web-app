@@ -1,20 +1,28 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import PartnerHeader from '@/components/partner/header';
 import PartnerBottomNavigation from '@/components/partner/bottomnavigation';
 import SaleCard from '@/components/partner/saleCard';
 import { getCurrentPartnerProfileDetails, PartnerProfileDetails } from '@/lib/partnersStore';
 import { getPartnerTodayBottleSales } from '@/lib/sessionStore';
 import {
+  getPartnerPointsSummary,
+  PartnerPointsSummary,
+} from '@/lib/pointsStore';
+import {
   Package,
   ShoppingCart,
   Loader2,
   Sparkles,
+  Coins,
+  ChevronRight,
 } from 'lucide-react';
 
 export default function PartnerDashboardPage() {
   const [partner, setPartner] = useState<PartnerProfileDetails | null>(null);
+  const [pointsSummary, setPointsSummary] = useState<PartnerPointsSummary | null>(null);
   const [todayBottleSales, setTodayBottleSales] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSaleOpen, setIsSaleOpen] = useState<boolean>(false);
@@ -23,8 +31,17 @@ export default function PartnerDashboardPage() {
     let isMounted = true;
 
     async function fetchDashboard() {
-      const partnerRes = await getCurrentPartnerProfileDetails();
+      const [partnerRes, pointsRes] = await Promise.all([
+        getCurrentPartnerProfileDetails(),
+        getPartnerPointsSummary(),
+      ]);
+
       if (!isMounted) return;
+
+      if (pointsRes.data) {
+        setPointsSummary(pointsRes.data);
+      }
+
       if (partnerRes.data) {
         setPartner(partnerRes.data);
         const salesCount = await getPartnerTodayBottleSales(partnerRes.data.id);
@@ -35,6 +52,7 @@ export default function PartnerDashboardPage() {
         if (!isMounted) return;
         setTodayBottleSales(salesCount);
       }
+
       setLoading(false);
     }
 
@@ -45,7 +63,23 @@ export default function PartnerDashboardPage() {
     };
   }, []);
 
-  const handleSaleSuccess = async () => {
+  const handleSaleSuccess = async (newPoints?: number) => {
+    // Refresh points summary
+    if (newPoints !== undefined) {
+      setPointsSummary((prev) =>
+        prev
+          ? {
+              ...prev,
+              available_points: newPoints,
+              total_points: prev.total_points + (newPoints - prev.available_points),
+            }
+          : null
+      );
+    } else {
+      const pointsRes = await getPartnerPointsSummary();
+      if (pointsRes.data) setPointsSummary(pointsRes.data);
+    }
+
     // Refresh today's bottle sales count
     if (partner?.id) {
       const salesCount = await getPartnerTodayBottleSales(partner.id);
@@ -67,7 +101,50 @@ export default function PartnerDashboardPage() {
       <PartnerHeader />
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-lg sm:max-w-2xl mx-auto px-4 py-6 sm:py-8 pb-28 space-y-6">
+      <main className="flex-1 w-full max-w-lg sm:max-w-4xl mx-auto px-4 py-4 sm:py-6 pb-28 space-y-6">
+        {/* Top Right: Points with Coins Icon (Available Points) */}
+        <div className="flex justify-end items-center">
+          <Link
+            href="/partner/points"
+            className="card-interactive inline-flex items-center gap-2.5 px-4 py-2 rounded-[var(--radius-full)] border shadow-xs transition-transform hover:scale-105 focus:outline-none"
+            style={{
+              backgroundColor: 'var(--color-surface)',
+              borderColor: 'var(--color-border)',
+            }}
+            aria-label="View points transactions"
+          >
+            <div
+              className="w-7 h-7 rounded-[var(--radius-full)] flex items-center justify-center shrink-0"
+              style={{
+                backgroundColor: 'var(--color-warning-light)',
+                color: 'var(--color-warning)',
+              }}
+            >
+              <Coins className="w-4 h-4" />
+            </div>
+            <div className="flex flex-col text-left">
+              <span
+                className="text-[10px] font-semibold uppercase tracking-wider"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                Points
+              </span>
+              <span
+                className="text-xs sm:text-sm font-extrabold font-mono leading-tight"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                {loading
+                  ? '...'
+                  : `${pointsSummary?.available_points?.toLocaleString() ?? 0} pts`}
+              </span>
+            </div>
+            <ChevronRight
+              className="w-3.5 h-3.5 ml-0.5"
+              style={{ color: 'var(--color-text-muted)' }}
+            />
+          </Link>
+        </div>
+
         {/* Welcome Greeting: Hello {partner name} */}
         <div className="card-base p-6">
           <div className="flex items-center gap-2 mb-1">
@@ -138,15 +215,21 @@ export default function PartnerDashboardPage() {
             <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
               Units logged from partner point transactions
             </span>
-            <button
-              type="button"
-              onClick={() => setIsSaleOpen(true)}
-              className="btn-base btn-primary text-xs py-1.5 px-3 flex items-center gap-1.5 shadow-xs"
-            >
-              <ShoppingCart className="w-3.5 h-3.5" />
-              <span>Record Sale</span>
-            </button>
+            
           </div>
+        </div>
+
+        {/* Bottom Left: Fixed Sale Button */}
+        <div className="fixed bottom-20 left-4 sm:left-6 z-20">
+          <button
+            type="button"
+            onClick={() => setIsSaleOpen(true)}
+            className="btn-base btn-primary shadow-lg rounded-[var(--radius-full)] px-5 py-2.5 flex items-center gap-2 text-xs sm:text-sm font-bold tracking-tight transition-transform hover:scale-105 focus:outline-none"
+            aria-label="Open sale panel"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span>Sale</span>
+          </button>
         </div>
 
         {/* Sale Card Modal */}

@@ -102,21 +102,21 @@ export default function PartnerPointsPage() {
       {/* Header connected at top */}
       <PartnerHeader />
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-lg sm:max-w-3xl mx-auto px-4 py-5 sm:py-8 pb-28 space-y-5">
+      {/* Main Content Area - Reduced empty spacing on mobile */}
+      <main className="flex-1 w-full max-w-lg sm:max-w-3xl mx-auto px-3 sm:px-4 py-3 sm:py-6 pb-20 sm:pb-28 space-y-3 sm:space-y-5">
         {/* Top Back Navigation */}
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => router.push('/partner/dashboard')}
-            className="btn-base btn-outline text-xs py-1.5 px-3"
+            className="btn-base btn-outline text-xs py-1 px-2.5"
             aria-label="Back to dashboard"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Dashboard</span>
           </button>
           <span
-            className="text-xs font-semibold px-2.5 py-1 rounded-[var(--radius-sm)] border"
+            className="text-[11px] font-semibold px-2 py-0.5 rounded-[var(--radius-sm)] border"
             style={{
               backgroundColor: 'var(--color-surface)',
               borderColor: 'var(--color-border)',
@@ -129,48 +129,48 @@ export default function PartnerPointsPage() {
 
         <div>
           <h1
-            className="text-xl sm:text-2xl font-bold tracking-tight"
+            className="text-lg sm:text-2xl font-bold tracking-tight"
             style={{ color: 'var(--color-text-primary)' }}
           >
             Partner Loyalty Points
           </h1>
           <p
-            className="text-xs sm:text-sm mt-0.5"
+            className="text-xs mt-0.5 line-clamp-1 sm:line-clamp-none"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            View your available balance, total points, and historical transaction logs
+            View available balance, total points, and transaction logs
           </p>
         </div>
 
-        {/* 1. Summary Cards: Available points and Total points */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* 1. Summary Cards: 2-column compact grid on mobile to save empty vertical space */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Available Points */}
           <div
-            className="card-base p-4 sm:p-5 rounded-[var(--radius-lg)] border shadow-xs flex items-center justify-between"
+            className="card-base p-3 sm:p-5 rounded-[var(--radius-lg)] border shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
             style={{
               backgroundColor: 'var(--color-surface)',
               borderColor: 'var(--color-border)',
             }}
           >
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-2 sm:gap-3.5">
               <div
-                className="w-12 h-12 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                className="w-9 h-9 sm:w-12 sm:h-12 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
                 style={{
                   backgroundColor: 'var(--color-warning-light)',
                   color: 'var(--color-warning)',
                 }}
               >
-                <Coins className="w-6 h-6" />
+                <Coins className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <span
-                  className="text-xs font-medium uppercase tracking-wider block"
+                  className="text-[10px] sm:text-xs font-medium uppercase tracking-wider block truncate"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
                   Available Points
                 </span>
                 <span
-                  className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight block mt-0.5"
+                  className="text-xl sm:text-3xl font-extrabold font-mono tracking-tight block mt-0.5"
                   style={{ color: 'var(--color-text-primary)' }}
                 >
                   {summaryLoading
@@ -180,7 +180,7 @@ export default function PartnerPointsPage() {
               </div>
             </div>
             <span
-              className="text-[11px] font-semibold px-2 py-0.5 rounded-[var(--radius-sm)]"
+              className="text-[10px] sm:text-[11px] font-semibold px-1.5 py-0.5 rounded-[var(--radius-sm)] self-start sm:self-center"
               style={{
                 backgroundColor: 'var(--color-success-light)',
                 color: 'var(--color-success-text)',
@@ -192,31 +192,31 @@ export default function PartnerPointsPage() {
 
           {/* Total Points */}
           <div
-            className="card-base p-4 sm:p-5 rounded-[var(--radius-lg)] border shadow-xs flex items-center justify-between"
+            className="card-base p-3 sm:p-5 rounded-[var(--radius-lg)] border shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
             style={{
               backgroundColor: 'var(--color-surface)',
               borderColor: 'var(--color-border)',
             }}
           >
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-2 sm:gap-3.5">
               <div
-                className="w-12 h-12 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                className="w-9 h-9 sm:w-12 sm:h-12 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
                 style={{
                   backgroundColor: 'var(--color-secondary-light)',
                   color: 'var(--color-secondary)',
                 }}
               >
-                <Award className="w-6 h-6" />
+                <Award className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <span
-                  className="text-xs font-medium uppercase tracking-wider block"
+                  className="text-[10px] sm:text-xs font-medium uppercase tracking-wider block truncate"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
                   Total Points
                 </span>
                 <span
-                  className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight block mt-0.5"
+                  className="text-xl sm:text-3xl font-extrabold font-mono tracking-tight block mt-0.5"
                   style={{ color: 'var(--color-primary)' }}
                 >
                   {summaryLoading
@@ -226,7 +226,7 @@ export default function PartnerPointsPage() {
               </div>
             </div>
             <span
-              className="text-[11px] font-semibold px-2 py-0.5 rounded-[var(--radius-sm)]"
+              className="text-[10px] sm:text-[11px] font-semibold px-1.5 py-0.5 rounded-[var(--radius-sm)] self-start sm:self-center"
               style={{
                 backgroundColor: 'var(--color-primary-light)',
                 color: 'var(--color-primary)',
@@ -237,28 +237,28 @@ export default function PartnerPointsPage() {
           </div>
         </div>
 
-        {/* 2. Filters(From to dates default last one week) */}
+        {/* 2. Filters(From to dates default last one week) - compact mobile grid */}
         <div
-          className="card-base p-4 rounded-[var(--radius-lg)] border space-y-3"
+          className="card-base p-3 sm:p-4 rounded-[var(--radius-lg)] border space-y-2 sm:space-y-3"
           style={{
             backgroundColor: 'var(--color-surface)',
             borderColor: 'var(--color-border)',
           }}
         >
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4" style={{ color: 'var(--color-secondary)' }} />
+          <div className="flex items-center gap-1.5">
+            <Filter className="w-3.5 h-3.5" style={{ color: 'var(--color-secondary)' }} />
             <h2
-              className="text-xs sm:text-sm font-bold uppercase tracking-wider"
+              className="text-[11px] sm:text-xs font-bold uppercase tracking-wider"
               style={{ color: 'var(--color-text-secondary)' }}
             >
               Filter Transactions
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
             <div className="form-group">
               <label
-                className="text-[11px] font-semibold flex items-center gap-1"
+                className="text-[10px] sm:text-[11px] font-semibold flex items-center gap-1 mb-1"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
                 <Calendar className="w-3 h-3 text-[var(--color-secondary)]" />
@@ -268,7 +268,7 @@ export default function PartnerPointsPage() {
                 type="date"
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="input-base text-xs py-1.5"
+                className="input-base text-xs py-1 px-2 w-full"
                 style={{
                   backgroundColor: 'var(--color-background)',
                   borderColor: 'var(--color-border)',
@@ -278,7 +278,7 @@ export default function PartnerPointsPage() {
 
             <div className="form-group">
               <label
-                className="text-[11px] font-semibold flex items-center gap-1"
+                className="text-[10px] sm:text-[11px] font-semibold flex items-center gap-1 mb-1"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
                 <Calendar className="w-3 h-3 text-[var(--color-secondary)]" />
@@ -288,7 +288,7 @@ export default function PartnerPointsPage() {
                 type="date"
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="input-base text-xs py-1.5"
+                className="input-base text-xs py-1 px-2 w-full"
                 style={{
                   backgroundColor: 'var(--color-background)',
                   borderColor: 'var(--color-border)',
@@ -296,11 +296,11 @@ export default function PartnerPointsPage() {
               />
             </div>
 
-            <div className="flex items-end">
+            <div className="col-span-2 sm:col-span-1 flex items-end">
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="btn-base btn-outline w-full text-xs py-2"
+                className="btn-base btn-outline w-full text-xs py-1.5 sm:py-2"
               >
                 Reset (Last 1 Week)
               </button>
@@ -309,10 +309,10 @@ export default function PartnerPointsPage() {
         </div>
 
         {/* 3. List of points transactions(from partner_points) */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between px-1">
+        <div className="space-y-2 sm:space-y-3">
+          <div className="flex items-center justify-between px-0.5">
             <h2
-              className="text-sm font-bold uppercase tracking-wider"
+              className="text-xs sm:text-sm font-bold uppercase tracking-wider"
               style={{ color: 'var(--color-text-secondary)' }}
             >
               Points History ({transactions.length})
@@ -321,14 +321,14 @@ export default function PartnerPointsPage() {
 
           {loading ? (
             <div
-              className="card-base p-10 text-center rounded-[var(--radius-lg)] border"
+              className="card-base p-8 text-center rounded-[var(--radius-lg)] border"
               style={{
                 backgroundColor: 'var(--color-surface)',
                 borderColor: 'var(--color-border)',
               }}
             >
               <Loader2
-                className="w-7 h-7 anim-spin mx-auto mb-2"
+                className="w-6 h-6 anim-spin mx-auto mb-2"
                 style={{ color: 'var(--color-secondary)' }}
               />
               <p
@@ -340,24 +340,24 @@ export default function PartnerPointsPage() {
             </div>
           ) : transactions.length === 0 ? (
             <div
-              className="card-base p-8 text-center rounded-[var(--radius-lg)] border border-dashed space-y-2"
+              className="card-base p-6 sm:p-8 text-center rounded-[var(--radius-lg)] border border-dashed space-y-1.5"
               style={{
                 backgroundColor: 'var(--color-surface)',
                 borderColor: 'var(--color-border)',
               }}
             >
               <Receipt
-                className="w-10 h-10 mx-auto"
+                className="w-8 h-8 mx-auto"
                 style={{ color: 'var(--color-text-muted)' }}
               />
               <p
-                className="text-sm font-semibold"
+                className="text-xs sm:text-sm font-semibold"
                 style={{ color: 'var(--color-text-primary)' }}
               >
                 No points transactions in selected date range
               </p>
               <p
-                className="text-xs max-w-xs mx-auto"
+                className="text-[11px] max-w-xs mx-auto"
                 style={{ color: 'var(--color-text-muted)' }}
               >
                 Adjust the date filters above to view earlier transactions.
@@ -365,13 +365,13 @@ export default function PartnerPointsPage() {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="btn-base btn-outline text-xs mt-2"
+                className="btn-base btn-outline text-xs mt-1 py-1 px-3"
               >
                 Reset Filters
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {transactions.map((tx) => {
                 const isAdd = tx.type === 'add';
                 const isExpanded = !!expandedNotes[tx.id];
@@ -379,17 +379,17 @@ export default function PartnerPointsPage() {
                 return (
                   <div
                     key={tx.id}
-                    className="card-base p-4 sm:p-5 rounded-[var(--radius-lg)] border transition-all hover:shadow-xs"
+                    className="card-base p-3 sm:p-4 rounded-[var(--radius-lg)] border transition-all hover:shadow-xs"
                     style={{
                       backgroundColor: 'var(--color-surface)',
                       borderColor: 'var(--color-border)',
                     }}
                   >
                     {/* Header Row: Type Icon + Points amount + Date */}
-                    <div className="flex items-center justify-between gap-3 pb-2.5 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
-                      <div className="flex items-center gap-2.5">
+                    <div className="flex items-center justify-between gap-2 pb-2 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                      <div className="flex items-center gap-2">
                         <div
-                          className="w-8 h-8 rounded-[var(--radius-full)] flex items-center justify-center shrink-0"
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-[var(--radius-full)] flex items-center justify-center shrink-0"
                           style={{
                             backgroundColor: isAdd
                               ? 'var(--color-success-light)'
@@ -400,24 +400,24 @@ export default function PartnerPointsPage() {
                           }}
                         >
                           {isAdd ? (
-                            <PlusCircle className="w-4 h-4" />
+                            <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           ) : (
-                            <MinusCircle className="w-4 h-4" />
+                            <MinusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           )}
                         </div>
 
                         <div>
                           {/* Type Badge: add or delete */}
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
                             <span
                               className={`status-chip ${
                                 isAdd ? 'status-chip-active' : 'status-chip-danger'
-                              } text-[10px] py-0.5 px-2`}
+                              } text-[9px] sm:text-[10px] py-0.5 px-1.5`}
                             >
                               {tx.type.toUpperCase()}
                             </span>
                             <span
-                              className="text-xs"
+                              className="text-[11px] sm:text-xs"
                               style={{ color: 'var(--color-text-muted)' }}
                             >
                               {tx.created_at}
@@ -429,7 +429,7 @@ export default function PartnerPointsPage() {
                       {/* Points Added / Deleted */}
                       <div className="text-right">
                         <span
-                          className="text-base sm:text-lg font-mono font-extrabold"
+                          className="text-sm sm:text-lg font-mono font-extrabold"
                           style={{
                             color: isAdd
                               ? 'var(--color-success)'
@@ -442,9 +442,9 @@ export default function PartnerPointsPage() {
                     </div>
 
                     {/* Available Points Balance Row */}
-                    <div className="flex items-center justify-between py-2 text-xs">
+                    <div className="flex items-center justify-between py-1.5 text-[11px] sm:text-xs">
                       <span style={{ color: 'var(--color-text-secondary)' }}>
-                        Balance After Transaction (avl_points):
+                        Balance (avl_points):
                       </span>
                       <span
                         className="font-mono font-bold"
@@ -458,7 +458,7 @@ export default function PartnerPointsPage() {
                     {tx.notes && (
                       <div
                         onClick={() => toggleNote(tx.id)}
-                        className="mt-2 p-2.5 rounded-[var(--radius-md)] border cursor-pointer transition-colors hover:bg-slate-50 focus:outline-none"
+                        className="mt-1.5 p-2 rounded-[var(--radius-md)] border cursor-pointer transition-colors hover:bg-slate-50 focus:outline-none"
                         style={{
                           backgroundColor: 'var(--color-surface-hover)',
                           borderColor: 'var(--color-border-subtle)',
@@ -468,26 +468,26 @@ export default function PartnerPointsPage() {
                         aria-expanded={isExpanded}
                         aria-label="Tap to toggle full notes"
                       >
-                        <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center justify-between gap-1 mb-0.5">
                           <span
-                            className="text-[10px] font-semibold uppercase tracking-wider block"
+                            className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider block"
                             style={{ color: 'var(--color-text-muted)' }}
                           >
                             Transaction Notes
                           </span>
                           <span
-                            className="text-[10px] font-medium flex items-center gap-0.5"
+                            className="text-[9px] sm:text-[10px] font-medium flex items-center gap-0.5"
                             style={{ color: 'var(--color-secondary)' }}
                           >
                             {isExpanded ? (
                               <>
                                 <span>Show less</span>
-                                <ChevronUp className="w-3 h-3" />
+                                <ChevronUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                               </>
                             ) : (
                               <>
-                                <span>Tap to expand</span>
-                                <ChevronDown className="w-3 h-3" />
+                                <span>Expand</span>
+                                <ChevronDown className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                               </>
                             )}
                           </span>
@@ -495,7 +495,7 @@ export default function PartnerPointsPage() {
 
                         {/* Note text: very small font, truncated unless expanded on tap */}
                         <p
-                          className={`text-[11px] leading-relaxed transition-all ${
+                          className={`text-[10px] sm:text-[11px] leading-relaxed transition-all ${
                             isExpanded ? 'block' : 'line-clamp-1'
                           }`}
                           style={{ color: 'var(--color-text-secondary)' }}

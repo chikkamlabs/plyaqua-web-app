@@ -18,7 +18,9 @@ import {
   ArrowUpRight,
   Calendar,
   Wallet,
+  Plus,
 } from 'lucide-react';
+import AddTransaction from '@/components/admin/addtransaction';
 
 function PartnerTransactionsContent() {
   const router = useRouter();
@@ -31,6 +33,7 @@ function PartnerTransactionsContent() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isAddOpen, setIsAddOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -110,88 +113,98 @@ function PartnerTransactionsContent() {
         <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
-          {/* Top navigation bar */}
-          <div className="flex items-center justify-between gap-4">
+          {/* Top navigation bar - Fully responsive */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <button
               type="button"
               onClick={() => router.push('/admin/partners/dashboard')}
-              className="btn-base btn-outline text-xs"
+              className="btn-base btn-outline text-xs self-start"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Partners</span>
             </button>
 
             {partner && (
-              <button
-                type="button"
-                onClick={() => router.push(`/admin/partner/stock?partnerId=${partner.id}`)}
-                className="btn-base btn-secondary text-xs"
-              >
-                <span>View Stock Inventory</span>
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setIsAddOpen(true)}
+                  className="btn-base btn-primary text-xs shadow-xs"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Transaction</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push(`/admin/partner/stock?partnerId=${partner.id}`)}
+                  className="btn-base btn-secondary text-xs"
+                >
+                  <span>View Stock Inventory</span>
+                </button>
+              </div>
             )}
           </div>
 
-          {/* Partner Header & Credit Balance Card */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Partner Header & Credit Balance Card - Responsive Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Partner Details */}
-            <div className="card-base p-6 md:col-span-2">
-              <div className="flex items-start gap-4">
+            <div className="card-base p-4 sm:p-6 lg:col-span-2">
+              <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                 <div
-                  className="w-12 h-12 rounded-[var(--radius-lg)] flex items-center justify-center flex-shrink-0"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-[var(--radius-lg)] flex items-center justify-center flex-shrink-0"
                   style={{
                     backgroundColor: 'var(--color-primary-light)',
                     color: 'var(--color-primary)',
                   }}
                 >
-                  <Store className="w-6 h-6" />
+                  <Store className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h1 className="page-title text-xl font-bold">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="page-title text-lg sm:text-xl font-bold truncate">
                       {partner ? partner.name : 'Partner Transactions Ledger'}
                     </h1>
                     {partner && (
-                      <span className="font-mono text-xs px-2 py-0.5 rounded-[var(--radius-sm)] bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] border border-[var(--color-border-subtle)]">
+                      <span className="font-mono text-xs px-2 py-0.5 rounded-[var(--radius-sm)] bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] border border-[var(--color-border-subtle)] flex-shrink-0">
                         {partner.partner_id}
                       </span>
                     )}
                   </div>
-                  <p className="body-text text-xs mt-1">
+                  <p className="body-text text-xs mt-1 break-words">
                     {partner?.partner_category_name || 'Standard Partner'} • {partner?.mobile || 'No mobile'} • {partner?.email || 'No email'}
                   </p>
-                  <p className="small-text mt-2 text-[var(--color-text-muted)]">
+                  <p className="small-text mt-1.5 text-[var(--color-text-muted)] break-words">
                     {partner?.address || 'No address registered'}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Partner Current Credit: partner_profile.credit / credit_amount */}
+            {/* Partner Current Credit */}
             <div
-              className="card-base p-6 flex flex-col justify-between"
+              className="card-base p-4 sm:p-6 flex flex-col justify-between"
               style={{
                 backgroundColor: 'var(--color-surface)',
                 borderColor: 'var(--color-border-strong)',
               }}
             >
-              <div className="flex items-center justify-between">
-                <span className="label-text">Current Credit (partner_profile.credit)</span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="label-text text-xs sm:text-sm">Current Credit (partner_profile.credit)</span>
                 <div
-                  className="p-2.5 rounded-[var(--radius-md)]"
+                  className="p-2 sm:p-2.5 rounded-[var(--radius-md)] flex-shrink-0"
                   style={{
                     backgroundColor: 'var(--color-secondary-light)',
                     color: 'var(--color-secondary)',
                   }}
                 >
-                  <Wallet className="w-5 h-5" />
+                  <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
               </div>
-              <div className="mt-4">
-                <p className="stat-value text-2xl font-bold font-mono" style={{ color: 'var(--color-primary)' }}>
+              <div className="mt-3 sm:mt-4">
+                <p className="stat-value text-xl sm:text-2xl font-bold font-mono" style={{ color: 'var(--color-primary)' }}>
                   ${currentCredit.toFixed(2)}
                 </p>
-                <p className="small-text mt-1 text-[var(--color-text-muted)]">
+                <p className="small-text mt-0.5 text-[var(--color-text-muted)]">
                   Outstanding account ledger balance
                 </p>
               </div>
@@ -408,16 +421,23 @@ function PartnerTransactionsContent() {
               <span>
                 Showing {filteredTransactions.length} transaction record(s)
               </span>
-              <span className="font-medium">
-                Closing Ledger Balance:{' '}
-                <strong className="font-mono text-[var(--color-primary)]">
-                  ${currentCredit.toFixed(2)}
-                </strong>
-              </span>
             </div>
           </div>
         </main>
       </div>
+
+      {/* Add Transaction Modal */}
+      {isAddOpen && partner && (
+        <AddTransaction
+          isOpen={isAddOpen}
+          onClose={() => setIsAddOpen(false)}
+          partner={partner}
+          onTransactionCreated={(newTx, newBalance) => {
+            setTransactions((prev) => [newTx, ...prev]);
+            setPartner((prev) => (prev ? { ...prev, credit_amount: newBalance } : prev));
+          }}
+        />
+      )}
     </div>
   );
 }

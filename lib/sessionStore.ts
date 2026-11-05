@@ -51,82 +51,70 @@ export function getTodayDateString(): string {
   return `${year}-${month}-${day}`;
 }
 
-// Initial demo sessions for preview / fallback
-const initialDemoSessions = [
-  {
-    id: 'sess-uuid-001',
-    session_id: 'sess_94218',
-    customer_id: '33333333-3333-3333-3333-333333333301',
-    created_at: new Date().toISOString(), // Today
-  },
-  {
-    id: 'sess-uuid-002',
-    session_id: 'sess_83109',
-    customer_id: '33333333-3333-3333-3333-333333333302',
-    created_at: new Date().toISOString(), // Today
-  },
-  {
-    id: 'sess-uuid-003',
-    session_id: 'sess_72044',
-    customer_id: '33333333-3333-3333-3333-333333333303',
-    created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: 'sess-uuid-004',
-    session_id: 'sess_61985',
-    customer_id: '33333333-3333-3333-3333-333333333304',
-    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: 'sess-uuid-005',
-    session_id: 'sess_51820',
-    customer_id: '33333333-3333-3333-3333-333333333301',
-    created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-];
+// Helper to generate realistic demo sessions spanning today and previous days
+function generateDemoSessionsData() {
+  const today = getTodayDateString();
+  const customers = [
+    { id: '33333333-3333-3333-3333-333333333301', name: 'Alex Morgan', mobile: '+1 (555) 345-6789' },
+    { id: '33333333-3333-3333-3333-333333333302', name: 'Samantha Reed', mobile: '+1 (555) 987-6543' },
+    { id: '33333333-3333-3333-3333-333333333303', name: 'Marcus Chen', mobile: '+1 (555) 456-7890' },
+    { id: '33333333-3333-3333-3333-333333333304', name: 'Elena Rostova', mobile: '+1 (555) 567-8901' },
+  ];
 
-const initialDemoCustomerPoints = [
-  {
-    id: 'cp-001',
-    session_id: 'sess-uuid-001',
-    customer_id: '33333333-3333-3333-3333-333333333301',
-    points: 50,
-    type: 'add',
-    notes: 'Word puzzle game completion reward',
-  },
-  {
-    id: 'cp-002',
-    session_id: 'sess-uuid-002',
-    customer_id: '33333333-3333-3333-3333-333333333302',
-    points: 25,
-    type: 'add',
-    notes: 'Trivia quiz game participation',
-  },
-  {
-    id: 'cp-003',
-    session_id: 'sess-uuid-003',
-    customer_id: '33333333-3333-3333-3333-333333333303',
-    points: 100,
-    type: 'add',
-    notes: 'Daily streak bonus reward',
-  },
-  {
-    id: 'cp-004',
-    session_id: 'sess-uuid-004',
-    customer_id: '33333333-3333-3333-3333-333333333304',
-    points: 10,
-    type: 'add',
-    notes: 'Quick spin reward',
-  },
-  {
-    id: 'cp-005',
-    session_id: 'sess-uuid-005',
-    customer_id: '33333333-3333-3333-3333-333333333301',
-    points: 75,
-    type: 'add',
-    notes: 'Double point weekend challenge',
-  },
-];
+  const sessions: Array<{ id: string; session_id: string; customer_id: string; created_at: string }> = [];
+  const points: Array<{ id: string; session_id: string; customer_id: string; points: number; type: string; notes: string }> = [];
+
+  // Generate 55 sessions for TODAY so pagination (50 per page) can be tested
+  for (let i = 1; i <= 55; i++) {
+    const cust = customers[(i - 1) % customers.length];
+    const hour = String(Math.floor((i * 13) % 24)).padStart(2, '0');
+    const minute = String(Math.floor((i * 17) % 60)).padStart(2, '0');
+    const second = String(Math.floor((i * 19) % 60)).padStart(2, '0');
+    const sessId = `sess-today-${String(i).padStart(3, '0')}`;
+    const pts = ((i * 15) % 150) + 10;
+
+    sessions.push({
+      id: sessId,
+      session_id: `sess_9${String(100 + i).padStart(4, '0')}`,
+      customer_id: cust.id,
+      created_at: `${today}T${hour}:${minute}:${second}.000Z`,
+    });
+
+    points.push({
+      id: `cp-today-${i}`,
+      session_id: sessId,
+      customer_id: cust.id,
+      points: pts,
+      type: 'add',
+      notes: `Interactive gameplay bonus #${i}`,
+    });
+  }
+
+  // Generate 15 sessions for YESTERDAY
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  for (let i = 1; i <= 15; i++) {
+    const cust = customers[i % customers.length];
+    const sessId = `sess-yest-${String(i).padStart(3, '0')}`;
+    sessions.push({
+      id: sessId,
+      session_id: `sess_8${String(200 + i).padStart(4, '0')}`,
+      customer_id: cust.id,
+      created_at: `${yesterday}T14:${String(i * 3).padStart(2, '0')}:00.000Z`,
+    });
+    points.push({
+      id: `cp-yest-${i}`,
+      session_id: sessId,
+      customer_id: cust.id,
+      points: 25,
+      type: 'add',
+      notes: 'Yesterday gameplay participation',
+    });
+  }
+
+  return { sessions, points };
+}
+
+const { sessions: initialDemoSessions, points: initialDemoCustomerPoints } = generateDemoSessionsData();
 
 const isPlaceholderConfig = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -232,10 +220,19 @@ export async function getPointsSessions(options?: {
 
   try {
     // 1. Fetch sessions
-    const { data: sessionsData, error: sessErr } = await supabase
+    let sessionsQuery = supabase
       .from('sessions')
       .select('id, session_id, customer_id, created_at')
       .order('created_at', { ascending: false });
+
+    if (options?.fromDate) {
+      sessionsQuery = sessionsQuery.gte('created_at', `${options.fromDate}T00:00:00.000Z`);
+    }
+    if (options?.toDate) {
+      sessionsQuery = sessionsQuery.lte('created_at', `${options.toDate}T23:59:59.999Z`);
+    }
+
+    const { data: sessionsData, error: sessErr } = await sessionsQuery;
 
     if (sessErr) {
       console.warn('Supabase sessions query error, using local fallback:', sessErr.message);

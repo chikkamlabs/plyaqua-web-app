@@ -477,3 +477,113 @@ export async function recordPurchaseAcceptanceTransaction(params: {
     };
   }
 }
+
+/**
+ * Add a payment/credit transaction for a partner:
+ * - partner_id: partner's UUID
+ * - type: 'sub' (fixed)
+ * - amount: payment amount
+ * - method: 'cash' | 'upi' | 'other'
+ * - notes: transaction notes / reference
+ * - balance: partner.balance - amount
+ * - payment_date: date string/timestamp
+ *
+ * Inserts into public.partner_transactions and updates partner_profile.credit_amount = balance
+ */
+export async function addPartnerPaymentTransaction(params: {
+  partner_id: string;
+  amount: number;
+  method: PaymentMethod;
+  notes?: string;
+  balance: number;
+  payment_date: string;
+}): Promise<{ data: PartnerTransaction | null; newCredit: number; error: Error | null }> {
+  const txAmount = Number(params.amount) || 0;
+  const newBalance = Number(params.balance);
+  const nowIso = new Date().toISOString();
+  const paymentDateIso = params.payment_date
+    ? (params.payment_date.includes('T') ? params.payment_date : new Date(params.payment_date).toISOString())
+    : nowIso;
+  const noteText = params.notes?.trim() || null;
+
+  const newTx: PartnerTransaction = {
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `tx-${Date.now()}`,
+    partner_id: params.partner_id,
+    type: 'sub',
+    bill_id: null,
+    bill_number: null,
+    amount: txAmount,
+    method: params.method,
+    notes: noteText,
+    balance: newBalance,
+    payment_date: paymentDateIso,
+    created_at: nowIso,
+    updated_at: nowIso,
+  };
+
+  // Update local storage caches immediately for offline/instant UI responsiveness
+  const existingTxs = getLocalTransactions();
+  const updatedTxs = [newTx, ...existingTxs.filter((t) => t.id !== newTx.id)];
+  saveLocalTransactions(updatedTxs);
+
+  if (typeof window !== 'undefined') {
+    try {
+      const rawPartners = localStorage.getItem(LOCAL_PARTNERS_KEY);
+      if (rawPartners) {
+        const partners = JSON.parse(rawPartners);
+        const pIndex = partners.findIndex((p: { id: string }) => p.id === params.partner_id);
+        if (pIndex >= 0) {
+          partners[pIndex].credit_amount = newBalance;
+          localStorage.setItem(LOCAL_PARTNERS_KEY, JSON.stringify(partners));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to update partner credit in localStorage', e);
+    }
+  }
+
+  try {
+    // 1. Insert into partner_transactions table in Supabase
+    const { data: insertedData, error: insertError } = await supabase
+      .from('partner_transactions')
+      .insert({
+        partner_id: params.partner_id,
+        type: 'sub' as const,
+        bill_id: null,
+        amount: txAmount,
+        method: params.method,
+        notes: noteText,
+        balance: newBalance,
+        payment_date: paymentDateIso,
+      })
+      .select()
+      .maybeSingle();
+
+    if (insertError) {
+      console.warn('Supabase partner_transactions insert warning:', insertError.message);
+    } else if (insertedData) {
+      newTx.id = insertedData.id;
+    }
+
+    // 2. Update partner_profile.credit_amount = balance in Supabase
+    const { error: profileUpdateError } = await supabase
+      .from('partner_profile')
+      .update({
+        credit_amount: newBalance,
+      })
+      .eq('id', params.partner_id);
+
+    if (profileUpdateError) {
+      console.warn('Supabase partner_profile credit_amount update warning:', profileUpdateError.message);
+    }
+
+    return { data: newTx, newCredit: newBalance, error: null };
+  } catch (err: unknown) {
+    return {
+      data: newTx,
+      newCredit: newBalance,
+      error: err instanceof Error ? err : new Error('Failed to record transaction'),
+    };
+  }
+}
+

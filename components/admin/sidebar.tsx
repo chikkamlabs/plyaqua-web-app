@@ -33,11 +33,11 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     { name: 'Customers', href: '/admin/customers', icon: UserCheck },
     { name: 'Products', href: '/admin/products', icon: Package },
     { name: 'Points Session', href: '/admin/pointssession', icon: History },
+    { name: 'Customer Points Reqs', href: '/admin/customerpointsreq', icon: Coins },
     { name: 'Ads Content', href: '/admin/adv-content', icon: Megaphone },
     { name: 'Marketing campaigns', href: '/admin/campaigns', icon: Sparkles },
     { name: 'Cashback sessions', href: '/admin/cashbacksessions', icon: CircleDollarSign },
     { name: 'partner categories', href: '/admin/partnercategories', icon: FolderTree },
-    { name: 'customer points', href: '/admin/customer-points', icon: Coins },
     { name: 'Game Play', href: '/admin/gameplay', icon: Gamepad2 },
   ];
 
@@ -108,6 +108,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 (pathname === '/admin/campaigns' || pathname?.startsWith('/admin/campaigns'))) ||
               (item.href === '/admin/cashbacksessions' &&
                 (pathname === '/admin/cashbacksessions' || pathname?.startsWith('/admin/cashbacksessions'))) ||
+              (item.href === '/admin/customerpointsreq' &&
+                (pathname === '/admin/customerpointsreq' || pathname?.startsWith('/admin/customerpointsreq'))) ||
               (item.href === '/admin/adv-content' &&
                 (pathname === '/admin/adv-content' || pathname?.startsWith('/admin/adv-content')));
 

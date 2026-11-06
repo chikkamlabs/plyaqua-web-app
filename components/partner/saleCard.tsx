@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   getPartnerStock,
   recordPartnerSale,
@@ -11,11 +11,13 @@ import {
   X,
   ShoppingCart,
   Package,
-  Layers,
+  Search,
   AlertCircle,
   CheckCircle,
   Loader2,
   FileText,
+  Minus,
+  Plus,
 } from 'lucide-react';
 
 interface SaleCardProps {
@@ -35,10 +37,13 @@ export default function SaleCard({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Selected product and quantity input (q input field)
+  // Search product input
+  const [productSearch, setProductSearch] = useState<string>('');
+
+  // Selected product and quantity input
   const [selectedProductId, setSelectedProductId] = useState<string>('');
-  const [saleQty, setSaleQty] = useState<number | string>('');
-  const [saleNotes, setSaleNotes] = useState<string>('Customer counter purchase');
+  const [saleQty, setSaleQty] = useState<number | string>(1);
+  const [saleNotes, setSaleNotes] = useState<string>('POS Counter sale');
 
   useEffect(() => {
     let isMounted = true;
@@ -75,11 +80,40 @@ export default function SaleCard({
     };
   }, [isOpen]);
 
+  // Default show 3 products from their inventory; if search query entered, filter inventory
+  const displayedProducts = useMemo(() => {
+    if (!productSearch.trim()) {
+      return inventory.slice(0, 3);
+    }
+    const q = productSearch.trim().toLowerCase();
+    return inventory.filter(
+      (item) =>
+        item.name.toLowerCase().includes(q) ||
+        item.prod_id.toLowerCase().includes(q) ||
+        item.size.toLowerCase().includes(q)
+    );
+  }, [inventory, productSearch]);
+
   if (!isOpen) return null;
 
   const currentItem = inventory.find(
     (item) => item.product_id === selectedProductId
   );
+
+  const handleDecreaseQty = () => {
+    const current = Number(saleQty) || 1;
+    if (current > 1) {
+      setSaleQty(current - 1);
+    }
+  };
+
+  const handleIncreaseQty = () => {
+    const current = Number(saleQty) || 0;
+    const max = currentItem?.qty ?? 9999;
+    if (current < max) {
+      setSaleQty(current + 1);
+    }
+  };
 
   const handleEnterSale = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,7 +166,8 @@ export default function SaleCard({
       onSaleSuccess(res.newAvailablePoints);
     }
 
-    setSaleQty('');
+    setSaleQty(1);
+    setSaleNotes('POS Counter sale');
     setTimeout(() => {
       onClose();
     }, 1800);
@@ -261,94 +296,133 @@ export default function SaleCard({
             </div>
           ) : (
             <form onSubmit={handleEnterSale} className="space-y-4">
-              {/* Product Selection: Product name and size in partner_inventory */}
-              <div className="form-group">
-                <label
-                  className="text-xs font-semibold block"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
-                  Select Product in Inventory
-                </label>
-                <div className="space-y-2 mt-1">
-                  {inventory.map((item) => {
-                    const isSelected = item.product_id === selectedProductId;
-                    return (
-                      <div
-                        key={item.product_id}
-                        onClick={() => setSelectedProductId(item.product_id)}
-                        className={`p-3 rounded-[var(--radius-md)] border cursor-pointer transition-all flex items-center justify-between ${
-                          isSelected ? 'ring-2' : 'hover:bg-slate-50'
-                        }`}
-                        style={{
-                          backgroundColor: isSelected
-                            ? 'var(--color-secondary-light)'
-                            : 'var(--color-surface)',
-                          borderColor: isSelected
-                            ? 'var(--color-secondary)'
-                            : 'var(--color-border)',
-                        }}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <Package
-                            className="w-4 h-4 shrink-0"
-                            style={{
-                              color: isSelected
-                                ? 'var(--color-secondary)'
-                                : 'var(--color-text-muted)',
-                            }}
-                          />
-                          <div className="min-w-0">
-                            {/* Product Name */}
+              {/* Product Selection: First allow to search and then Select the product default show 3 products from their inventory */}
+              <div className="form-group space-y-2">
+                <div className="flex items-center justify-between">
+                  <label
+                    className="text-xs font-semibold block"
+                    style={{ color: 'var(--color-text-primary)' }}
+                  >
+                    Select Product in Inventory
+                  </label>
+                  <span className="text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
+                    {productSearch ? 'Search results' : 'Showing top 3 products'}
+                  </span>
+                </div>
+
+                {/* Search Bar for Product Selection */}
+                <div className="relative">
+                  <Search
+                    className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search product by name, size or SKU..."
+                    value={productSearch}
+                    onChange={(e) => setProductSearch(e.target.value)}
+                    className="input-base pl-9 pr-8 text-xs py-2 w-full"
+                    style={{
+                      backgroundColor: 'var(--color-background)',
+                      borderColor: 'var(--color-border)',
+                    }}
+                  />
+                  {productSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setProductSearch('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"
+                      aria-label="Clear product search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* List of Products (Default 3 or filtered by search) */}
+                <div className="space-y-2 mt-2">
+                  {displayedProducts.length === 0 ? (
+                    <div className="p-4 text-center border border-dashed rounded-[var(--radius-md)] text-xs text-[var(--color-text-muted)]">
+                      No matching products found. Try a different search.
+                    </div>
+                  ) : (
+                    displayedProducts.map((item) => {
+                      const isSelected = item.product_id === selectedProductId;
+                      return (
+                        <div
+                          key={item.product_id}
+                          onClick={() => setSelectedProductId(item.product_id)}
+                          className={`p-3 rounded-[var(--radius-md)] border cursor-pointer transition-all flex items-center justify-between ${
+                            isSelected ? 'ring-2' : 'hover:bg-slate-50'
+                          }`}
+                          style={{
+                            backgroundColor: isSelected
+                              ? 'var(--color-secondary-light)'
+                              : 'var(--color-surface)',
+                            borderColor: isSelected
+                              ? 'var(--color-secondary)'
+                              : 'var(--color-border)',
+                          }}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <Package
+                              className="w-4 h-4 shrink-0"
+                              style={{
+                                color: isSelected
+                                  ? 'var(--color-secondary)'
+                                  : 'var(--color-text-muted)',
+                              }}
+                            />
+                            <div className="min-w-0">
+                              <span
+                                className="text-xs sm:text-sm font-semibold block truncate"
+                                style={{ color: 'var(--color-text-primary)' }}
+                              >
+                                {item.name}
+                              </span>
+                              <span
+                                className="text-[11px] block"
+                                style={{ color: 'var(--color-text-muted)' }}
+                              >
+                                Size: <strong>{item.size}</strong> &bull; SKU: {item.prod_id}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="text-right shrink-0 pl-2">
                             <span
-                              className="text-xs sm:text-sm font-semibold block truncate"
-                              style={{ color: 'var(--color-text-primary)' }}
-                            >
-                              {item.name}
-                            </span>
-                            {/* Size */}
-                            <span
-                              className="text-[11px] block"
+                              className="text-[10px] block"
                               style={{ color: 'var(--color-text-muted)' }}
                             >
-                              Size: <strong>{item.size}</strong> &bull; SKU: {item.prod_id}
+                              In Stock
+                            </span>
+                            <span
+                              className="text-xs sm:text-sm font-mono font-bold"
+                              style={{
+                                color:
+                                  item.qty > 0
+                                    ? 'var(--color-primary)'
+                                    : 'var(--color-danger)',
+                              }}
+                            >
+                              {item.qty} units
                             </span>
                           </div>
                         </div>
-
-                        {/* Current Inventory Stock */}
-                        <div className="text-right shrink-0 pl-2">
-                          <span
-                            className="text-[10px] block"
-                            style={{ color: 'var(--color-text-muted)' }}
-                          >
-                            In Stock
-                          </span>
-                          <span
-                            className="text-xs sm:text-sm font-mono font-bold"
-                            style={{
-                              color:
-                                item.qty > 0
-                                  ? 'var(--color-primary)'
-                                  : 'var(--color-danger)',
-                            }}
-                          >
-                            {item.qty} units
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  )}
                 </div>
               </div>
 
-              {/* Quantity Input Field (q input field) */}
+              {/* Quantity Input with - 1 + buttons to increase and decrease without overcoming icon/placeholder */}
               <div className="form-group">
                 <div className="flex items-center justify-between">
                   <label
                     className="text-xs font-semibold"
                     style={{ color: 'var(--color-text-primary)' }}
                   >
-                    Sale Quantity (q)
+                    Sale Quantity
                   </label>
                   {currentItem && (
                     <span
@@ -359,29 +433,71 @@ export default function SaleCard({
                     </span>
                   )}
                 </div>
-                <div className="relative mt-1">
-                  <Layers
-                    className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  />
+
+                {/* - 1 + Stepper Controls */}
+                <div className="flex items-center gap-3 mt-1.5">
+                  <button
+                    type="button"
+                    onClick={handleDecreaseQty}
+                    disabled={Number(saleQty) <= 1}
+                    className="w-10 h-10 rounded-[var(--radius-md)] border flex items-center justify-center font-bold text-base transition-colors hover:bg-slate-100 disabled:opacity-40 shrink-0"
+                    style={{
+                      backgroundColor: 'var(--color-surface)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)',
+                    }}
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+
                   <input
                     type="number"
                     min={1}
                     max={currentItem?.qty || 9999}
-                    placeholder="Enter quantity sold (e.g. 10)"
                     value={saleQty}
-                    onChange={(e) => setSaleQty(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '') {
+                        setSaleQty('');
+                        return;
+                      }
+                      const num = parseInt(val, 10);
+                      if (!isNaN(num)) {
+                        setSaleQty(Math.max(1, Math.min(num, currentItem?.qty || 9999)));
+                      }
+                    }}
+                    placeholder="1"
                     required
-                    className="input-base pl-9 text-xs sm:text-sm"
+                    className="input-base text-center font-mono font-bold text-sm sm:text-base h-10 w-24 shrink-0"
                     style={{
                       backgroundColor: 'var(--color-surface)',
                       borderColor: 'var(--color-border)',
                     }}
                   />
+
+                  <button
+                    type="button"
+                    onClick={handleIncreaseQty}
+                    disabled={currentItem ? Number(saleQty) >= currentItem.qty : false}
+                    className="w-10 h-10 rounded-[var(--radius-md)] border flex items-center justify-center font-bold text-base transition-colors hover:bg-slate-100 disabled:opacity-40 shrink-0"
+                    style={{
+                      backgroundColor: 'var(--color-surface)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)',
+                    }}
+                    aria-label="Increase quantity"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+
+                  <span className="text-xs text-[var(--color-text-muted)] font-medium">
+                    Bottle(s)
+                  </span>
                 </div>
               </div>
 
-              {/* Notes input */}
+              {/* Notes input: Default 'POS Counter sale' */}
               <div className="form-group">
                 <label
                   className="text-xs font-semibold flex items-center gap-1"
@@ -392,7 +508,7 @@ export default function SaleCard({
                 </label>
                 <input
                   type="text"
-                  placeholder="Write something (e.g. Walk-in customer sale)..."
+                  placeholder="POS Counter sale"
                   value={saleNotes}
                   onChange={(e) => setSaleNotes(e.target.value)}
                   className="input-base text-xs sm:text-sm mt-1"

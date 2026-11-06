@@ -35,10 +35,18 @@ import {
   AlertCircle,
   Tag,
   Sliders,
+  Ticket,
 } from 'lucide-react';
+import { getTotalActivePlaycodesCount } from '@/lib/playcodesStore';
+import CreateCodes from '@/components/admin/createcodes';
 
 export default function GamePlayDashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Playcodes state
+  const [activePlaycodesCount, setActivePlaycodesCount] = useState<number>(0);
+  const [loadingPlaycodes, setLoadingPlaycodes] = useState<boolean>(true);
+  const [isCreateCodesOpen, setIsCreateCodesOpen] = useState<boolean>(false);
 
   // Data states
   const [words, setWords] = useState<GameWord[]>([]);
@@ -81,10 +89,12 @@ export default function GamePlayDashboardPage() {
 
     async function loadData() {
       setLoading(true);
-      const [wordsRes, pointsRes, cashbacksRes] = await Promise.all([
+      setLoadingPlaycodes(true);
+      const [wordsRes, pointsRes, cashbacksRes, codesRes] = await Promise.all([
         getGameWords(),
         getGamePoints(),
         getGameCashbacks(),
+        getTotalActivePlaycodesCount(),
       ]);
 
       if (!active) return;
@@ -92,8 +102,12 @@ export default function GamePlayDashboardPage() {
       if (wordsRes.data) setWords(wordsRes.data);
       if (pointsRes.data) setPoints(pointsRes.data);
       if (cashbacksRes.data) setCashbacks(cashbacksRes.data);
+      if (typeof codesRes.count === 'number') {
+        setActivePlaycodesCount(codesRes.count);
+      }
 
       setLoading(false);
+      setLoadingPlaycodes(false);
     }
 
     loadData();
@@ -328,8 +342,9 @@ export default function GamePlayDashboardPage() {
               </p>
             </div>
           ) : (
-            /* 3 Core Interactive Cards */
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <>
+              {/* 3 Core Interactive Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* 1. Game Words Card */}
               <div
                 onClick={() => {
@@ -535,7 +550,89 @@ export default function GamePlayDashboardPage() {
                 </div>
               </div>
             </div>
-          )}
+
+            {/* ======================================================================
+                PLAYCODES SECTION: Total Active Codes (Count) & Create Codes Button
+                ====================================================================== */}
+            <div
+              className="mt-8 rounded-2xl p-6 border transition-all"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                borderColor: 'var(--color-border-subtle)',
+              }}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                    style={{
+                      backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                      color: 'var(--color-secondary)',
+                    }}
+                  >
+                    <Ticket className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+                        Playcodes Pool
+                      </h2>
+                      <span className="badge badge-success text-[11px] font-semibold">
+                        playcodes
+                      </span>
+                    </div>
+                    <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                      Batch-generate unique <code className="text-[var(--color-secondary)] font-mono font-bold">ply-[number]</code> redemption codes for games and reward sessions
+                    </p>
+                  </div>
+                </div>
+
+                {/* Create Codes Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsCreateCodesOpen(true)}
+                  className="btn-base btn-primary flex items-center justify-center gap-2 text-xs py-2.5 px-4 shrink-0 shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Create Codes</span>
+                </button>
+              </div>
+
+              {/* Display Total Active Codes (Count) */}
+              <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div
+                  className="p-4 rounded-xl border flex items-center justify-between"
+                  style={{
+                    backgroundColor: 'var(--color-surface-hover)',
+                    borderColor: 'var(--color-border-subtle)',
+                  }}
+                >
+                  <div>
+                    <span className="text-xs text-[var(--color-text-secondary)] font-medium">
+                      Total Active Codes
+                    </span>
+                    <div className="text-2xl font-black text-[var(--color-text-primary)] mt-1 font-mono">
+                      {loadingPlaycodes ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-[var(--color-secondary)]" />
+                      ) : (
+                        activePlaycodesCount.toLocaleString()
+                      )}
+                    </div>
+                  </div>
+                  <div
+                    className="px-2.5 py-1 rounded-full text-xs font-bold"
+                    style={{
+                      backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                      color: 'var(--color-success-text)',
+                    }}
+                  >
+                    Active Status
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
         </main>
       </div>
 
@@ -1202,6 +1299,20 @@ export default function GamePlayDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Create Codes Modal */}
+      <CreateCodes
+        isOpen={isCreateCodesOpen}
+        onClose={() => setIsCreateCodesOpen(false)}
+        onCodesCreated={async () => {
+          setLoadingPlaycodes(true);
+          const res = await getTotalActivePlaycodesCount();
+          if (typeof res.count === 'number') {
+            setActivePlaycodesCount(res.count);
+          }
+          setLoadingPlaycodes(false);
+        }}
+      />
     </div>
   );
 }

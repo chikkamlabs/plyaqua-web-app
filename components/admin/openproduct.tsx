@@ -1,9 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Loader2, Edit3, ShieldAlert } from 'lucide-react';
+import { X, Loader2, Edit3, ShieldAlert, Upload, Image as ImageIcon, Tag as TagIcon, FileText } from 'lucide-react';
 import {
   updateProduct,
+  uploadProductImage,
   getSizes,
   Product,
   ProductSize,
@@ -33,6 +35,12 @@ function OpenProductForm({
   const [qty, setQty] = useState<number>(product.qty ?? 0);
   const [status, setStatus] = useState<'active' | 'deactive'>(product.status || 'active');
 
+  // New fields: image_url, description, tag
+  const [imageUrl, setImageUrl] = useState<string>(product.image_url || '');
+  const [description, setDescription] = useState<string>(product.description || '');
+  const [tag, setTag] = useState<string>(product.tag || '');
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
+
   const [sizes, setSizes] = useState<ProductSize[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +62,24 @@ function OpenProductForm({
       active = false;
     };
   }, []);
+
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setError(null);
+
+    const { url, error: uploadErr } = await uploadProductImage(file);
+    setUploadingImage(false);
+
+    if (uploadErr || !url) {
+      setError(uploadErr?.message || 'Failed to upload product image to product_images');
+      return;
+    }
+
+    setImageUrl(url);
+  };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +106,9 @@ function OpenProductForm({
       sp: Number(sp),
       qty: Number(qty) || 0,
       status,
+      image_url: imageUrl.trim() || null,
+      description: description.trim() || null,
+      tag: tag.trim() || null,
     });
 
     setLoading(false);
@@ -245,6 +274,108 @@ function OpenProductForm({
                   className="input-base"
                 />
               </div>
+            </div>
+
+            {/* Row 5: Tag & Image Display/Upload */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="form-group">
+                <label className="form-label flex items-center gap-1.5">
+                  <TagIcon className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
+                  Product Tag
+                </label>
+                <input
+                  type="text"
+                  value={tag}
+                  onChange={(e) => setTag(e.target.value)}
+                  placeholder="e.g. Bestseller, Premium, Eco, New"
+                  className="input-base"
+                />
+                <span className="form-helper">Promotional or categorization tag</span>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
+                  Product Image (product_images)
+                </label>
+                <div className="space-y-2">
+                  {/* Current Image Display */}
+                  {imageUrl ? (
+                    <div className="relative p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
+                      <img
+                        src={imageUrl}
+                        alt={name || 'Product'}
+                        className="w-14 h-14 object-cover rounded-lg border border-slate-200 shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-slate-800 truncate">Current Image</p>
+                        <p className="text-[10px] text-slate-400 truncate">{imageUrl}</p>
+                        <label className="inline-flex items-center gap-1 text-[11px] text-sky-600 hover:text-sky-700 font-medium cursor-pointer mt-1">
+                          <Upload className="w-3 h-3" />
+                          <span>Change Image</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageFileChange}
+                            disabled={uploadingImage || loading}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setImageUrl('')}
+                        className="text-slate-400 hover:text-red-500 p-1"
+                        title="Remove image"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex items-center justify-center gap-2 p-3 border-2 border-dashed rounded-xl cursor-pointer hover:bg-slate-50 transition-colors border-slate-200">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageFileChange}
+                        disabled={uploadingImage || loading}
+                        className="hidden"
+                      />
+                      {uploadingImage ? (
+                        <div className="flex items-center gap-2 text-xs text-sky-600 font-medium">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Uploading to product_images...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+                          <Upload className="w-4 h-4 text-sky-600" />
+                          <span>Upload product image</span>
+                        </div>
+                      )}
+                    </label>
+                  )}
+                  {uploadingImage && imageUrl && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-sky-600">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Uploading new image...</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Row 6: Description */}
+            <div className="form-group">
+              <label className="form-label flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
+                Product Description
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                placeholder="Product description and details..."
+                className="textarea-base"
+              />
             </div>
           </div>
 

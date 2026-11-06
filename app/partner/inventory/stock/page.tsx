@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import PartnerHeader from '@/components/partner/header';
 import PartnerBottomNavigation from '@/components/partner/bottomnavigation';
@@ -25,20 +25,22 @@ export default function PartnerStockPage() {
   const router = useRouter();
 
   const [searchProdId, setSearchProdId] = useState<string>('');
-  const [stockItems, setStockItems] = useState<PartnerStockItem[]>([]);
+  const [allItems, setAllItems] = useState<PartnerStockItem[]>([]);
   const [summary, setSummary] = useState<StockSummary>({
     totalProducts: 0,
     totalBottles: 0,
   });
-  const [loading, setLoading] = useState<boolean>(true);
+  const [initialLoading, setInitialLoading] = useState<boolean>(true);
 
+  // Load all partner stock inventory and summary once on mount
+  // Total products and Total bottles stay persistent and do NOT refresh on search input
   useEffect(() => {
     let isMounted = true;
 
-    async function loadStock() {
-      setLoading(true);
+    async function loadInitialStock() {
+      setInitialLoading(true);
       const [res, prodMap] = await Promise.all([
-        getPartnerStock(searchProdId),
+        getPartnerStock(), // fetch all without search query
         fetchProductDetailsMap(),
       ]);
       if (!isMounted) return;
@@ -52,18 +54,30 @@ export default function PartnerStockPage() {
             prod_id: p?.prod_id || item.prod_id,
           };
         });
-        setStockItems(enriched);
+        setAllItems(enriched);
         setSummary(res.summary);
       }
-      setLoading(false);
+      setInitialLoading(false);
     }
 
-    loadStock();
+    loadInitialStock();
 
     return () => {
       isMounted = false;
     };
-  }, [searchProdId]);
+  }, []);
+
+  // Filter items based on search input without touching or refreshing the summary cards
+  const filteredStockItems = useMemo(() => {
+    if (!searchProdId.trim()) return allItems;
+    const q = searchProdId.trim().toLowerCase();
+    return allItems.filter(
+      (item) =>
+        item.prod_id.toLowerCase().includes(q) ||
+        item.name.toLowerCase().includes(q) ||
+        item.size.toLowerCase().includes(q)
+    );
+  }, [allItems, searchProdId]);
 
   return (
     <div
@@ -113,7 +127,7 @@ export default function PartnerStockPage() {
           </p>
         </div>
 
-        {/* 1. Summary Cards: Total Products & Total Bottles */}
+        {/* 1. Summary Cards: Total Products & Total Bottles (NOT refreshed on search input) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Total Products (count partner_inventory) */}
           <div
@@ -144,7 +158,7 @@ export default function PartnerStockPage() {
                   className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight block mt-0.5"
                   style={{ color: 'var(--color-text-primary)' }}
                 >
-                  {loading ? '...' : summary.totalProducts}
+                  {initialLoading ? '...' : summary.totalProducts}
                 </span>
               </div>
             </div>
@@ -188,7 +202,7 @@ export default function PartnerStockPage() {
                   className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight block mt-0.5"
                   style={{ color: 'var(--color-secondary)' }}
                 >
-                  {loading ? '...' : summary.totalBottles.toLocaleString()}
+                  {initialLoading ? '...' : summary.totalBottles.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -204,25 +218,25 @@ export default function PartnerStockPage() {
           </div>
         </div>
 
-        {/* 2. Search bar(prod_id) */}
+        {/* 2. Search bar(prod_id) with proper left padding to avoid overlapping icon & placeholder */}
         <div
-          className="card-base p-4 rounded-[var(--radius-lg)] border"
+          className="card-base p-3.5 sm:p-4 rounded-[var(--radius-lg)] border"
           style={{
             backgroundColor: 'var(--color-surface)',
             borderColor: 'var(--color-border)',
           }}
         >
-          <div className="relative">
+          <div className="relative flex items-center">
             <Search
-              className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"
+              className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
               style={{ color: 'var(--color-text-muted)' }}
             />
             <input
               type="text"
-              placeholder="Search stock by Product ID (e.g. prod_101) or name..."
+              placeholder="Search by Product ID (e.g. prod_101) or name..."
               value={searchProdId}
               onChange={(e) => setSearchProdId(e.target.value)}
-              className="input-base pl-9 pr-8 text-xs sm:text-sm"
+              className="input-base pl-10 pr-9 text-xs sm:text-sm py-2.5 w-full"
               style={{
                 backgroundColor: 'var(--color-background)',
                 borderColor: 'var(--color-border)',
@@ -248,11 +262,11 @@ export default function PartnerStockPage() {
               className="text-sm font-bold uppercase tracking-wider"
               style={{ color: 'var(--color-text-secondary)' }}
             >
-              Stock Items ({stockItems.length})
+              Stock Items ({filteredStockItems.length})
             </h2>
           </div>
 
-          {loading ? (
+          {initialLoading ? (
             <div
               className="card-base p-10 text-center rounded-[var(--radius-lg)] border"
               style={{
@@ -271,7 +285,7 @@ export default function PartnerStockPage() {
                 Loading inventory stock...
               </p>
             </div>
-          ) : stockItems.length === 0 ? (
+          ) : filteredStockItems.length === 0 ? (
             <div
               className="card-base p-8 text-center rounded-[var(--radius-lg)] border border-dashed space-y-2"
               style={{
@@ -294,7 +308,7 @@ export default function PartnerStockPage() {
                 style={{ color: 'var(--color-text-muted)' }}
               >
                 {searchProdId
-                  ? 'No products matched your search. Try a different product ID.'
+                  ? 'No products matched your search. Try a different product ID or name.'
                   : 'You currently have no products allocated in your partner inventory.'}
               </p>
               {searchProdId && (
@@ -321,7 +335,7 @@ export default function PartnerStockPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {stockItems.map((item) => (
+                    {filteredStockItems.map((item) => (
                       <tr key={item.id} className="table-row">
                         <td className="table-cell">
                           <span
@@ -366,7 +380,7 @@ export default function PartnerStockPage() {
 
               {/* Mobile-Friendly Cards List */}
               <div className="sm:hidden divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
-                {stockItems.map((item) => (
+                {filteredStockItems.map((item) => (
                   <div
                     key={item.id}
                     className="p-4 space-y-2.5"

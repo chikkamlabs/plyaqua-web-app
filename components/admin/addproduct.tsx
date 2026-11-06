@@ -1,11 +1,13 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Loader2, PackagePlus } from 'lucide-react';
+import { X, Loader2, PackagePlus, Upload, Image as ImageIcon, Tag as TagIcon, FileText } from 'lucide-react';
 import {
   createProduct,
   calculateNextProductId,
   getSizes,
+  uploadProductImage,
   Product,
   ProductSize,
 } from '@/lib/productsStore';
@@ -29,6 +31,13 @@ export default function AddProduct({
   const [sp, setSp] = useState<number | ''>('');
   const [qty, setQty] = useState<number>(0);
   const [status, setStatus] = useState<'active' | 'deactive'>('active');
+
+  // New fields: image_url, description, tag
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
+  const [description, setDescription] = useState<string>('');
+  const [tag, setTag] = useState<string>('');
 
   const [sizes, setSizes] = useState<ProductSize[]>([]);
   const [loading, setLoading] = useState(false);
@@ -58,6 +67,25 @@ export default function AddProduct({
     };
   }, [isOpen]);
 
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageFile(file);
+    setUploadingImage(true);
+    setError(null);
+
+    const { url, error: uploadErr } = await uploadProductImage(file);
+    setUploadingImage(false);
+
+    if (uploadErr || !url) {
+      setError(uploadErr?.message || 'Failed to upload product image to product_images');
+      return;
+    }
+
+    setImageUrl(url);
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,6 +106,21 @@ export default function AddProduct({
     setLoading(true);
     setError(null);
 
+    let finalImageUrl = imageUrl.trim();
+
+    // If an image file is selected but hasn't finished uploading
+    if (imageFile && !finalImageUrl) {
+      setUploadingImage(true);
+      const { url, error: uploadErr } = await uploadProductImage(imageFile);
+      setUploadingImage(false);
+      if (uploadErr || !url) {
+        setLoading(false);
+        setError(uploadErr?.message || 'Failed to upload product image');
+        return;
+      }
+      finalImageUrl = url;
+    }
+
     const { data, error: err } = await createProduct({
       prod_id: autoProdId,
       name: name.trim(),
@@ -86,6 +129,9 @@ export default function AddProduct({
       sp: Number(sp),
       qty: Number(qty) || 0,
       status,
+      image_url: finalImageUrl || null,
+      description: description.trim() || null,
+      tag: tag.trim() || null,
     });
 
     setLoading(false);
@@ -252,6 +298,94 @@ export default function AddProduct({
                   className="input-base"
                 />
               </div>
+            </div>
+
+            {/* Row 5: Tag & Image Upload */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="form-group">
+                <label className="form-label flex items-center gap-1.5">
+                  <TagIcon className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
+                  Product Tag
+                </label>
+                <input
+                  type="text"
+                  value={tag}
+                  onChange={(e) => setTag(e.target.value)}
+                  placeholder="e.g. Bestseller, Premium, Eco, New"
+                  className="input-base"
+                />
+                <span className="form-helper">Optional promotional or marketing tag</span>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
+                  Product Image (product_images)
+                </label>
+                <div className="space-y-2">
+                  <label className="flex items-center justify-center gap-2 p-3 border-2 border-dashed rounded-xl cursor-pointer hover:bg-slate-50 transition-colors border-slate-200">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageFileChange}
+                      disabled={uploadingImage || loading}
+                      className="hidden"
+                    />
+                    {uploadingImage ? (
+                      <div className="flex items-center gap-2 text-xs text-sky-600 font-medium">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Uploading to product_images...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+                        <Upload className="w-4 h-4 text-sky-600" />
+                        <span>Choose product image file</span>
+                      </div>
+                    )}
+                  </label>
+                  {imageUrl && (
+                    <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200">
+                      <img
+                        src={imageUrl}
+                        alt="Product Preview"
+                        className="w-10 h-10 object-cover rounded-md border border-slate-200 shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-medium text-emerald-700 truncate">
+                          Uploaded to product_images
+                        </p>
+                        <p className="text-[10px] text-slate-400 truncate">{imageUrl}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImageUrl('');
+                          setImageFile(null);
+                        }}
+                        className="text-slate-400 hover:text-red-500 p-1"
+                        title="Remove image"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Row 6: Description */}
+            <div className="form-group">
+              <label className="form-label flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-[var(--color-secondary)]" />
+                Product Description
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                placeholder="Detailed description of the product, purification process, or ingredients..."
+                className="textarea-base"
+              />
             </div>
           </div>
 

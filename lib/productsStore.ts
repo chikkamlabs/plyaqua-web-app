@@ -16,7 +16,11 @@ export interface Product {
   sp: number;
   qty: number;
   status: 'active' | 'deactive';
+  image_url?: string | null;
+  description?: string | null;
+  tag?: string | null;
   created_at?: string;
+  updated_at?: string;
 }
 
 const LOCAL_STORAGE_SIZES_KEY = 'plyaqua_sizes_data';
@@ -40,6 +44,9 @@ const initialDemoProducts: Product[] = [
     sp: 15.0,
     qty: 500,
     status: 'active',
+    image_url: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=600&q=80',
+    description: 'Refreshing natural spring water sourced from mountain aquifers.',
+    tag: 'Bestseller',
   },
   {
     id: '55555555-5555-5555-5555-555555555502',
@@ -280,6 +287,59 @@ export async function updateSize(
    ========================================================================= */
 
 /**
+ * Upload product image to the 'product_images' storage bucket
+ */
+export async function uploadProductImage(
+  file: File
+): Promise<{ url: string | null; error: Error | null }> {
+  const bucket = 'product_images';
+  const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const filePath = `prod_${Date.now()}_${cleanFileName}`;
+
+  if (isPlaceholderConfig()) {
+    if (typeof window !== 'undefined') {
+      return { url: URL.createObjectURL(file), error: null };
+    }
+    return {
+      url: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=600&q=80',
+      error: null,
+    };
+  }
+
+  try {
+    const { error: uploadError } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.warn(`Supabase storage upload error in ${bucket}:`, uploadError.message);
+      if (typeof window !== 'undefined') {
+        return { url: URL.createObjectURL(file), error: null };
+      }
+      return { url: null, error: new Error(uploadError.message) };
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath);
+
+    return { url: publicUrlData.publicUrl, error: null };
+  } catch (err) {
+    console.warn('Product image upload error, fallback to blob URL:', err);
+    if (typeof window !== 'undefined') {
+      return { url: URL.createObjectURL(file), error: null };
+    }
+    return {
+      url: null,
+      error: err instanceof Error ? err : new Error('Failed to upload product image'),
+    };
+  }
+}
+
+/**
  * Fetch all products from public.products (with resolved size value)
  */
 export async function getProducts(): Promise<{
@@ -328,7 +388,11 @@ export async function getProducts(): Promise<{
       sp: Number(p.sp) || 0,
       qty: Number(p.qty) || 0,
       status: (p.status as 'active' | 'deactive') || 'active',
+      image_url: p.image_url || null,
+      description: p.description || null,
+      tag: p.tag || null,
       created_at: p.created_at,
+      updated_at: p.updated_at,
     }));
 
     setLocalProducts(formatted);
@@ -352,6 +416,9 @@ export async function createProduct(params: {
   sp: number;
   qty: number;
   status: 'active' | 'deactive';
+  image_url?: string | null;
+  description?: string | null;
+  tag?: string | null;
 }): Promise<{
   data: Product | null;
   error: Error | null;
@@ -370,6 +437,9 @@ export async function createProduct(params: {
     sp: Number(params.sp) || 0,
     qty: Number(params.qty) || 0,
     status: params.status || 'active',
+    image_url: params.image_url || null,
+    description: params.description || null,
+    tag: params.tag || null,
   };
 
   if (isPlaceholderConfig()) {
@@ -389,6 +459,9 @@ export async function createProduct(params: {
         sp: Number(params.sp) || 0,
         qty: Number(params.qty) || 0,
         status: params.status || 'active',
+        image_url: params.image_url || null,
+        description: params.description || null,
+        tag: params.tag || null,
       })
       .select()
       .single();
@@ -410,6 +483,11 @@ export async function createProduct(params: {
       sp: Number(data.sp) || 0,
       qty: Number(data.qty) || 0,
       status: data.status,
+      image_url: data.image_url || null,
+      description: data.description || null,
+      tag: data.tag || null,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
     };
 
     setLocalProducts([...current, created]);
@@ -436,6 +514,9 @@ export async function updateProduct(
     sp: number;
     qty: number;
     status: 'active' | 'deactive';
+    image_url?: string | null;
+    description?: string | null;
+    tag?: string | null;
   }
 ): Promise<{
   data: Product | null;
@@ -455,6 +536,9 @@ export async function updateProduct(
         mrp: Number(updates.mrp) || 0,
         sp: Number(updates.sp) || 0,
         qty: Number(updates.qty) || 0,
+        image_url: updates.image_url !== undefined ? updates.image_url : current[localIndex].image_url,
+        description: updates.description !== undefined ? updates.description : current[localIndex].description,
+        tag: updates.tag !== undefined ? updates.tag : current[localIndex].tag,
       };
       setLocalProducts(current);
       return { data: current[localIndex], error: null };
@@ -472,6 +556,9 @@ export async function updateProduct(
         sp: Number(updates.sp) || 0,
         qty: Number(updates.qty) || 0,
         status: updates.status,
+        image_url: updates.image_url,
+        description: updates.description,
+        tag: updates.tag,
       })
       .eq('id', id)
       .select()
@@ -500,6 +587,11 @@ export async function updateProduct(
       sp: Number(data.sp) || 0,
       qty: Number(data.qty) || 0,
       status: data.status,
+      image_url: data.image_url || null,
+      description: data.description || null,
+      tag: data.tag || null,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
     };
 
     if (localIndex !== -1) {

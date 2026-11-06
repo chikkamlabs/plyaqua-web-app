@@ -247,7 +247,7 @@ function OpenProductForm({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="form-group">
                 <label className="form-label">
-                  Maximum Retail Price (₹) (MRP) <span className="text-[var(--color-danger)]">*</span>
+                  Maximum Retail Price ($) (MRP) <span className="text-[var(--color-danger)]">*</span>
                 </label>
                 <input
                   type="number"
@@ -262,7 +262,7 @@ function OpenProductForm({
 
               <div className="form-group">
                 <label className="form-label">
-                  Selling Price (₹) (SP) <span className="text-[var(--color-danger)]">*</span>
+                  Selling Price ($) (SP) <span className="text-[var(--color-danger)]">*</span>
                 </label>
                 <input
                   type="number"

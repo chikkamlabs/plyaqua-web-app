@@ -48,7 +48,7 @@ export function getTodayDateString(): string {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
-  return `₹{year}-₹{month}-₹{day}`;
+  return `${year}-${month}-${day}`;
 }
 
 // Helper to generate realistic demo sessions spanning today and previous days
@@ -70,23 +70,23 @@ function generateDemoSessionsData() {
     const hour = String(Math.floor((i * 13) % 24)).padStart(2, '0');
     const minute = String(Math.floor((i * 17) % 60)).padStart(2, '0');
     const second = String(Math.floor((i * 19) % 60)).padStart(2, '0');
-    const sessId = `sess-today-₹{String(i).padStart(3, '0')}`;
+    const sessId = `sess-today-${String(i).padStart(3, '0')}`;
     const pts = ((i * 15) % 150) + 10;
 
     sessions.push({
       id: sessId,
-      session_id: `sess_9₹{String(100 + i).padStart(4, '0')}`,
+      session_id: `sess_9${String(100 + i).padStart(4, '0')}`,
       customer_id: cust.id,
-      created_at: `₹{today}T₹{hour}:₹{minute}:₹{second}.000Z`,
+      created_at: `${today}T${hour}:${minute}:${second}.000Z`,
     });
 
     points.push({
-      id: `cp-today-₹{i}`,
+      id: `cp-today-${i}`,
       session_id: sessId,
       customer_id: cust.id,
       points: pts,
       type: 'add',
-      notes: `Interactive gameplay bonus #₹{i}`,
+      notes: `Interactive gameplay bonus #${i}`,
     });
   }
 
@@ -94,15 +94,15 @@ function generateDemoSessionsData() {
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
   for (let i = 1; i <= 15; i++) {
     const cust = customers[i % customers.length];
-    const sessId = `sess-yest-₹{String(i).padStart(3, '0')}`;
+    const sessId = `sess-yest-${String(i).padStart(3, '0')}`;
     sessions.push({
       id: sessId,
-      session_id: `sess_8₹{String(200 + i).padStart(4, '0')}`,
+      session_id: `sess_8${String(200 + i).padStart(4, '0')}`,
       customer_id: cust.id,
-      created_at: `₹{yesterday}T14:₹{String(i * 3).padStart(2, '0')}:00.000Z`,
+      created_at: `${yesterday}T14:${String(i * 3).padStart(2, '0')}:00.000Z`,
     });
     points.push({
-      id: `cp-yest-₹{i}`,
+      id: `cp-yest-${i}`,
       session_id: sessId,
       customer_id: cust.id,
       points: 25,
@@ -226,10 +226,10 @@ export async function getPointsSessions(options?: {
       .order('created_at', { ascending: false });
 
     if (options?.fromDate) {
-      sessionsQuery = sessionsQuery.gte('created_at', `₹{options.fromDate}T00:00:00.000Z`);
+      sessionsQuery = sessionsQuery.gte('created_at', `${options.fromDate}T00:00:00.000Z`);
     }
     if (options?.toDate) {
-      sessionsQuery = sessionsQuery.lte('created_at', `₹{options.toDate}T23:59:59.999Z`);
+      sessionsQuery = sessionsQuery.lte('created_at', `${options.toDate}T23:59:59.999Z`);
     }
 
     const { data: sessionsData, error: sessErr } = await sessionsQuery;
@@ -327,8 +327,8 @@ export async function getTodaySessionsCount(): Promise<number> {
     const { count, error } = await supabase
       .from('sessions')
       .select('*', { count: 'exact', head: true })
-      .gte('created_at', `₹{todayStr}T00:00:00.000Z`)
-      .lte('created_at', `₹{todayStr}T23:59:59.999Z`);
+      .gte('created_at', `${todayStr}T00:00:00.000Z`)
+      .lte('created_at', `${todayStr}T23:59:59.999Z`);
 
     if (error) {
       return 2; // fallback demo count
@@ -413,8 +413,8 @@ export async function getPartnerTodayBottleSales(partnerId?: string): Promise<nu
       .select('points, notes, created_at')
       .eq('partner_id', effectivePartnerId)
       .eq('type', 'add')
-      .gte('created_at', `₹{todayStr}T00:00:00.000Z`)
-      .lte('created_at', `₹{todayStr}T23:59:59.999Z`);
+      .gte('created_at', `${todayStr}T00:00:00.000Z`)
+      .lte('created_at', `${todayStr}T23:59:59.999Z`);
 
     if (error || !data || data.length === 0) {
       // Local storage fallback

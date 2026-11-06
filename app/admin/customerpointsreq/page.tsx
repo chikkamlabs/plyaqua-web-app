@@ -185,7 +185,7 @@ export default function CustomerPointsReqPage() {
           type: 'success',
           message:
             targetStatus === 'completed' && req.status !== 'completed'
-              ? `Request marked completed. Deducted ₹{req.points} points from customer ledger.`
+              ? `Request marked completed. Deducted ${req.points} points from customer ledger.`
               : 'Request status and notes updated successfully.',
         });
 

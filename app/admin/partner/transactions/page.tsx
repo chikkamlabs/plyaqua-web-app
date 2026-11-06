@@ -136,7 +136,7 @@ function PartnerTransactionsContent() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => router.push(`/admin/partner/stock?partnerId=₹{partner.id}`)}
+                  onClick={() => router.push(`/admin/partner/stock?partnerId=${partner.id}`)}
                   className="btn-base btn-secondary text-xs"
                 >
                   <span>View Stock Inventory</span>
@@ -202,7 +202,7 @@ function PartnerTransactionsContent() {
               </div>
               <div className="mt-3 sm:mt-4">
                 <p className="stat-value text-xl sm:text-2xl font-bold font-mono" style={{ color: 'var(--color-primary)' }}>
-                  ₹{currentCredit.toFixed(2)}
+                  ${currentCredit.toFixed(2)}
                 </p>
                 <p className="small-text mt-0.5 text-[var(--color-text-muted)]">
                   Outstanding account ledger balance
@@ -386,14 +386,14 @@ function PartnerTransactionsContent() {
                                 color: isAdd ? 'var(--color-danger-text)' : 'var(--color-success-text)',
                               }}
                             >
-                              {isAdd ? '+' : '-'}₹{Number(tx.amount).toFixed(2)}
+                              {isAdd ? '+' : '-'}${Number(tx.amount).toFixed(2)}
                             </span>
                           </td>
 
                           {/* Balance */}
                           <td className="table-cell text-right font-mono font-semibold text-sm">
                             <span style={{ color: 'var(--color-primary)' }}>
-                              ₹{Number(tx.balance).toFixed(2)}
+                              ${Number(tx.balance).toFixed(2)}
                             </span>
                           </td>
 

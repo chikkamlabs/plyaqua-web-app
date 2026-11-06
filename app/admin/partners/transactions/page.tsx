@@ -11,7 +11,7 @@ function RedirectContent() {
   useEffect(() => {
     const partnerId = searchParams?.get('partnerId') || searchParams?.get('partner_id') || searchParams?.get('id') || '';
     if (partnerId) {
-      router.replace(`/admin/partner/transactions?partnerId=₹{partnerId}`);
+      router.replace(`/admin/partner/transactions?partnerId=${partnerId}`);
     } else {
       router.replace('/admin/partner/transactions');
     }

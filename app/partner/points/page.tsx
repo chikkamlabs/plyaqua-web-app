@@ -410,7 +410,7 @@ export default function PartnerPointsPage() {
                           {/* Type Badge: add or delete */}
                           <div className="flex items-center gap-1.5">
                             <span
-                              className={`status-chip ₹{
+                              className={`status-chip ${
                                 isAdd ? 'status-chip-active' : 'status-chip-danger'
                               } text-[9px] sm:text-[10px] py-0.5 px-1.5`}
                             >
@@ -436,7 +436,7 @@ export default function PartnerPointsPage() {
                               : 'var(--color-danger)',
                           }}
                         >
-                          {isAdd ? `+₹{tx.points}` : `-₹{tx.points}`} pts
+                          {isAdd ? `+${tx.points}` : `-${tx.points}`} pts
                         </span>
                       </div>
                     </div>
@@ -495,7 +495,7 @@ export default function PartnerPointsPage() {
 
                         {/* Note text: very small font, truncated unless expanded on tap */}
                         <p
-                          className={`text-[10px] sm:text-[11px] leading-relaxed transition-all ₹{
+                          className={`text-[10px] sm:text-[11px] leading-relaxed transition-all ${
                             isExpanded ? 'block' : 'line-clamp-1'
                           }`}
                           style={{ color: 'var(--color-text-secondary)' }}

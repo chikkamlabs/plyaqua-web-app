@@ -101,7 +101,7 @@ const setLocalPartners = (partners: Partner[]) => {
  * Calculates auto-fill formula: partner_101 + length of partners
  */
 export function calculateNextPartnerId(currentLength: number): string {
-  return `partner_₹{101 + currentLength}`;
+  return `partner_${101 + currentLength}`;
 }
 
 /**
@@ -205,7 +205,7 @@ export async function createPartner(params: {
 }> {
   const current = getLocalPartners();
   const newLocalPartner: Partner = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-partner-₹{Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-partner-${Date.now()}`,
     partner_id: params.partner_id,
     name: params.name,
     email: params.email,

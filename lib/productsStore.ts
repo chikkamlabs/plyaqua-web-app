@@ -138,7 +138,7 @@ const setLocalProducts = (products: Product[]) => {
  * Calculates auto-fill formula: prod_101 + length of products
  */
 export function calculateNextProductId(currentLength: number): string {
-  return `prod_₹{101 + currentLength}`;
+  return `prod_${101 + currentLength}`;
 }
 
 /* =========================================================================
@@ -190,7 +190,7 @@ export async function createSize(value: string): Promise<{
 }> {
   const current = getLocalSizes();
   const newLocalSize: ProductSize = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-size-₹{Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-size-${Date.now()}`,
     value: value.trim(),
   };
 
@@ -294,7 +294,7 @@ export async function uploadProductImage(
 ): Promise<{ url: string | null; error: Error | null }> {
   const bucket = 'product_images';
   const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-  const filePath = `prod_₹{Date.now()}_₹{cleanFileName}`;
+  const filePath = `prod_${Date.now()}_${cleanFileName}`;
 
   if (isPlaceholderConfig()) {
     if (typeof window !== 'undefined') {
@@ -315,7 +315,7 @@ export async function uploadProductImage(
       });
 
     if (uploadError) {
-      console.warn(`Supabase storage upload error in ₹{bucket}:`, uploadError.message);
+      console.warn(`Supabase storage upload error in ${bucket}:`, uploadError.message);
       if (typeof window !== 'undefined') {
         return { url: URL.createObjectURL(file), error: null };
       }
@@ -428,7 +428,7 @@ export async function createProduct(params: {
   const sizeObj = sizes.find((s) => s.id === params.size);
 
   const newLocalProduct: Product = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-prod-₹{Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-prod-${Date.now()}`,
     prod_id: params.prod_id,
     name: params.name,
     size: params.size,

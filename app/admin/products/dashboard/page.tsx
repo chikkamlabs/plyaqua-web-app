@@ -375,18 +375,18 @@ export default function ProductsDashboardPage() {
 
                         {/* mrp */}
                         <td className="table-cell text-xs font-mono text-[var(--color-text-secondary)]">
-                          ₹{prod.mrp.toFixed(2)}
+                          ${prod.mrp.toFixed(2)}
                         </td>
 
                         {/* sp */}
                         <td className="table-cell text-xs font-mono font-semibold text-[var(--color-primary)]">
-                          ₹{prod.sp.toFixed(2)}
+                          ${prod.sp.toFixed(2)}
                         </td>
 
                         {/* qty */}
                         <td className="table-cell font-medium text-xs">
                           <span
-                            className={`px-2 py-0.5 rounded-[var(--radius-sm)] ₹{
+                            className={`px-2 py-0.5 rounded-[var(--radius-sm)] ${
                               prod.qty > 0
                                 ? 'bg-[var(--color-primary-light)] text-[var(--color-primary)]'
                                 : 'bg-[var(--color-danger-light)] text-[var(--color-danger-text)]'

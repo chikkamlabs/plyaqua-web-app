@@ -39,7 +39,7 @@ export function formatDateYMD(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  return `₹{year}-₹{month}-₹{day}`;
+  return `${year}-${month}-${day}`;
 }
 
 // Helper to calculate default last one week date range (7 days ago to today)
@@ -244,7 +244,7 @@ export async function getPartnerPurchases(filters?: {
     }
 
     if (filters?.searchBillId && filters.searchBillId.trim()) {
-      query = query.ilike('bill_id', `%₹{filters.searchBillId.trim()}%`);
+      query = query.ilike('bill_id', `%${filters.searchBillId.trim()}%`);
     }
 
     if (filters?.fromDate) {
@@ -359,7 +359,7 @@ export async function getPurchaseById(id: string): Promise<{
     const { data: bill, error: billErr } = await supabase
       .from('bills')
       .select('*')
-      .or(`id.eq.₹{id},bill_id.eq.₹{id}`)
+      .or(`id.eq.${id},bill_id.eq.${id}`)
       .maybeSingle();
 
     if (billErr || !bill) {
@@ -448,7 +448,7 @@ export async function updatePurchaseStatusToAccepted(id: string): Promise<{
         status: 'accepted',
         updated_at: new Date().toISOString(),
       })
-      .or(`id.eq.₹{id},bill_id.eq.₹{id}`)
+      .or(`id.eq.${id},bill_id.eq.${id}`)
       .select()
       .maybeSingle();
 

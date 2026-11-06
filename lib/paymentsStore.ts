@@ -33,7 +33,7 @@ export function formatDateYMD(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  return `₹{year}-₹{month}-₹{day}`;
+  return `${year}-${month}-${day}`;
 }
 
 // Helper to calculate default last one week date range (7 days ago to today)
@@ -275,10 +275,10 @@ export async function getPartnerTransactions(options?: {
       .order('payment_date', { ascending: false });
 
     if (options?.fromDate) {
-      query = query.gte('payment_date', `₹{options.fromDate}T00:00:00.000Z`);
+      query = query.gte('payment_date', `${options.fromDate}T00:00:00.000Z`);
     }
     if (options?.toDate) {
-      query = query.lte('payment_date', `₹{options.toDate}T23:59:59.999Z`);
+      query = query.lte('payment_date', `${options.toDate}T23:59:59.999Z`);
     }
 
     const { data, error } = await query;
@@ -433,7 +433,7 @@ export async function recordPurchaseAcceptanceTransaction(params: {
 
     // 4. Update local storage caches for offline/instant UI feedback
     const newTx: PartnerTransaction = {
-      id: insertedData?.id || `tx-₹{Date.now()}`,
+      id: insertedData?.id || `tx-${Date.now()}`,
       partner_id: effectivePartnerId,
       type: 'add',
       bill_id: params.bill_id,
@@ -507,7 +507,7 @@ export async function addPartnerPaymentTransaction(params: {
   const noteText = params.notes?.trim() || null;
 
   const newTx: PartnerTransaction = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `tx-₹{Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `tx-${Date.now()}`,
     partner_id: params.partner_id,
     type: 'sub',
     bill_id: null,

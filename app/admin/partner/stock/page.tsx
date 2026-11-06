@@ -119,7 +119,7 @@ function PartnerStockContent() {
                 {/* Add bill button: opens app/admin/bills/addbill/page.tsx with this partner */}
                 <button
                   type="button"
-                  onClick={() => router.push(`/admin/bills/addbill?partner_id=₹{partner.id}`)}
+                  onClick={() => router.push(`/admin/bills/addbill?partner_id=${partner.id}`)}
                   className="btn-base btn-primary text-xs shadow-xs"
                 >
                   <Plus className="w-4 h-4" />

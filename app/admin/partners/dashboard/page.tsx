@@ -249,7 +249,7 @@ export default function PartnersDashboardPage() {
                         {selectedCategoryFilter === 'all'
                           ? 'All Partner Categories'
                           : selectedCategoryObj
-                          ? `₹{selectedCategoryObj.name}`
+                          ? `${selectedCategoryObj.name}`
                           : 'Filtered Category'}
                       </span>
                     </div>
@@ -476,7 +476,7 @@ export default function PartnersDashboardPage() {
                             {/* Stock button */}
                             <button
                               type="button"
-                              onClick={() => router.push(`/admin/partner/stock?partnerId=₹{partner.id}`)}
+                              onClick={() => router.push(`/admin/partner/stock?partnerId=${partner.id}`)}
                               className="btn-base btn-outline text-xs py-1 px-2.5"
                               title="View partner stock inventory"
                             >
@@ -487,7 +487,7 @@ export default function PartnersDashboardPage() {
                             {/* Transactions button */}
                             <button
                               type="button"
-                              onClick={() => router.push(`/admin/partner/transactions?partnerId=₹{partner.id}`)}
+                              onClick={() => router.push(`/admin/partner/transactions?partnerId=${partner.id}`)}
                               className="btn-base btn-outline text-xs py-1 px-2.5"
                               title="View partner transactions and credit ledger"
                             >
@@ -498,7 +498,7 @@ export default function PartnersDashboardPage() {
                             {/* Open button */}
                             <button
                               type="button"
-                              onClick={() => router.push(`/admin/partners/openpartner?id=₹{partner.id}`)}
+                              onClick={() => router.push(`/admin/partners/openpartner?id=${partner.id}`)}
                               className="btn-base btn-outline text-xs py-1 px-2.5"
                               title="Open partner profile"
                             >

@@ -20,7 +20,7 @@ export function formatDateYMD(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  return `₹{year}-₹{month}-₹{day}`;
+  return `${year}-${month}-${day}`;
 }
 
 const initialDemoRequests: CustomerPointReq[] = [
@@ -32,8 +32,8 @@ const initialDemoRequests: CustomerPointReq[] = [
     points: 150,
     notes: 'Requested discount voucher for store pickup',
     status: 'pending',
-    created_at: `₹{formatDateYMD(new Date())}T09:15:00.000Z`,
-    updated_at: `₹{formatDateYMD(new Date())}T09:15:00.000Z`,
+    created_at: `${formatDateYMD(new Date())}T09:15:00.000Z`,
+    updated_at: `${formatDateYMD(new Date())}T09:15:00.000Z`,
   },
   {
     id: 'cpr-002',
@@ -43,8 +43,8 @@ const initialDemoRequests: CustomerPointReq[] = [
     points: 80,
     notes: 'Reward redemption for free bottle cooler tote',
     status: 'processing',
-    created_at: `₹{formatDateYMD(new Date())}T10:45:00.000Z`,
-    updated_at: `₹{formatDateYMD(new Date())}T11:00:00.000Z`,
+    created_at: `${formatDateYMD(new Date())}T10:45:00.000Z`,
+    updated_at: `${formatDateYMD(new Date())}T11:00:00.000Z`,
   },
   {
     id: 'cpr-003',
@@ -54,8 +54,8 @@ const initialDemoRequests: CustomerPointReq[] = [
     points: 300,
     notes: 'Cashback points conversion approved',
     status: 'completed',
-    created_at: `₹{formatDateYMD(new Date())}T08:30:00.000Z`,
-    updated_at: `₹{formatDateYMD(new Date())}T08:45:00.000Z`,
+    created_at: `${formatDateYMD(new Date())}T08:30:00.000Z`,
+    updated_at: `${formatDateYMD(new Date())}T08:45:00.000Z`,
   },
   {
     id: 'cpr-004',
@@ -65,8 +65,8 @@ const initialDemoRequests: CustomerPointReq[] = [
     points: 250,
     notes: 'Insufficient points verification check',
     status: 'rejected',
-    created_at: `₹{formatDateYMD(new Date(Date.now() - 86400000))}T14:20:00.000Z`,
-    updated_at: `₹{formatDateYMD(new Date(Date.now() - 86400000))}T15:10:00.000Z`,
+    created_at: `${formatDateYMD(new Date(Date.now() - 86400000))}T14:20:00.000Z`,
+    updated_at: `${formatDateYMD(new Date(Date.now() - 86400000))}T15:10:00.000Z`,
   },
   {
     id: 'cpr-005',
@@ -76,8 +76,8 @@ const initialDemoRequests: CustomerPointReq[] = [
     points: 50,
     notes: 'Customer cancelled prior to dispatch',
     status: 'cancelled',
-    created_at: `₹{formatDateYMD(new Date(Date.now() - 86400000 * 2))}T11:05:00.000Z`,
-    updated_at: `₹{formatDateYMD(new Date(Date.now() - 86400000 * 2))}T11:30:00.000Z`,
+    created_at: `${formatDateYMD(new Date(Date.now() - 86400000 * 2))}T11:05:00.000Z`,
+    updated_at: `${formatDateYMD(new Date(Date.now() - 86400000 * 2))}T11:30:00.000Z`,
   },
 ];
 
@@ -181,11 +181,11 @@ export async function getCustomerPointReqs(filters?: PointReqFilters): Promise<{
       .order('created_at', { ascending: false });
 
     if (filters?.fromDate) {
-      query = query.gte('created_at', `₹{filters.fromDate}T00:00:00.000Z`);
+      query = query.gte('created_at', `${filters.fromDate}T00:00:00.000Z`);
     }
 
     if (filters?.toDate) {
-      query = query.lte('created_at', `₹{filters.toDate}T23:59:59.999Z`);
+      query = query.lte('created_at', `${filters.toDate}T23:59:59.999Z`);
     }
 
     if (filters?.status && filters.status !== 'all') {
@@ -324,7 +324,7 @@ export async function updateCustomerPointReq(
           points: params.points,
           customer_id: params.customer_id,
           session_id: null,
-          notes: params.notes ? `Redemption completed: ₹{params.notes}` : 'Customer points redemption request completed',
+          notes: params.notes ? `Redemption completed: ${params.notes}` : 'Customer points redemption request completed',
           created_at: now,
           updated_at: now,
         },

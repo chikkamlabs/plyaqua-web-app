@@ -222,7 +222,7 @@ export default function PartnerPaymentsPage() {
                     className="font-mono text-2xl sm:text-3xl font-extrabold tracking-tight"
                     style={{ color: 'var(--color-secondary)' }}
                   >
-                    ₹{summary.totalCreditAmount.toFixed(2)}
+                    ${summary.totalCreditAmount.toFixed(2)}
                   </span>
                 )}
                 <span
@@ -480,13 +480,13 @@ export default function PartnerPaymentsPage() {
                               color: isAdd ? 'var(--color-success-text)' : 'var(--color-danger-text)',
                             }}
                           >
-                            {isAdd ? '+' : '-'}₹{tx.amount.toFixed(2)}
+                            {isAdd ? '+' : '-'}${tx.amount.toFixed(2)}
                           </span>
                           <span
                             className="text-[11px] font-mono block"
                             style={{ color: 'var(--color-text-secondary)' }}
                           >
-                            Bal: ₹{tx.balance.toFixed(2)}
+                            Bal: ${tx.balance.toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -575,8 +575,8 @@ export default function PartnerPaymentsPage() {
                       <th className="table-header-cell">Type</th>
                       <th className="table-header-cell">Bill ID</th>
                       <th className="table-header-cell">Method</th>
-                      <th className="table-header-cell text-right">Amount (₹)</th>
-                      <th className="table-header-cell text-right">Balance (₹)</th>
+                      <th className="table-header-cell text-right">Amount ($)</th>
+                      <th className="table-header-cell text-right">Balance ($)</th>
                       <th className="table-header-cell">Date</th>
                       <th className="table-header-cell">Notes</th>
                     </tr>
@@ -630,14 +630,14 @@ export default function PartnerPaymentsPage() {
                               color: isAdd ? 'var(--color-success-text)' : 'var(--color-danger-text)',
                             }}
                           >
-                            {isAdd ? '+' : '-'}₹{tx.amount.toFixed(2)}
+                            {isAdd ? '+' : '-'}${tx.amount.toFixed(2)}
                           </td>
 
                           <td
                             className="table-cell font-mono font-bold text-right text-xs"
                             style={{ color: 'var(--color-text-primary)' }}
                           >
-                            ₹{tx.balance.toFixed(2)}
+                            ${tx.balance.toFixed(2)}
                           </td>
 
                           <td className="table-cell text-xs whitespace-nowrap" style={{ color: 'var(--color-text-muted)' }}>

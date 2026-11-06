@@ -109,7 +109,7 @@ export default function CashbackSessionsPage() {
     if (res.error || !res.success) {
       setFeedbackMsg({
         type: 'error',
-        text: res.error?.message || `Failed to update status for ₹{item.customer_name}`,
+        text: res.error?.message || `Failed to update status for ${item.customer_name}`,
       });
       return;
     }
@@ -172,7 +172,7 @@ export default function CashbackSessionsPage() {
 
           {feedbackMsg && (
             <div
-              className={`p-3.5 rounded-[var(--radius-md)] flex items-center gap-2.5 text-xs border ₹{
+              className={`p-3.5 rounded-[var(--radius-md)] flex items-center gap-2.5 text-xs border ${
                 feedbackMsg.type === 'error'
                   ? 'bg-rose-50 border-rose-200 text-rose-700'
                   : 'bg-emerald-50 border-emerald-200 text-emerald-700'
@@ -258,7 +258,7 @@ export default function CashbackSessionsPage() {
                     className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight block mt-0.5"
                     style={{ color: 'var(--color-secondary)' }}
                   >
-                    {loading ? '...' : `₹₹{totalSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                    {loading ? '...' : `$${totalSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                   </span>
                 </div>
               </div>
@@ -458,7 +458,7 @@ export default function CashbackSessionsPage() {
                                   className="text-base font-extrabold font-mono"
                                   style={{ color: 'var(--color-secondary)' }}
                                 >
-                                  ₹{item.cashback_amnt.toFixed(2)}
+                                  ${item.cashback_amnt.toFixed(2)}
                                 </span>
                                 <span
                                   className="text-[11px] block mt-0.5"
@@ -541,7 +541,7 @@ export default function CashbackSessionsPage() {
                                 type="button"
                                 onClick={() => handleSaveStatus(item)}
                                 disabled={isSaving}
-                                className={`btn-base text-xs py-1.5 px-3 flex items-center gap-1.5 ml-auto ₹{
+                                className={`btn-base text-xs py-1.5 px-3 flex items-center gap-1.5 ml-auto ${
                                   isDirty
                                     ? 'btn-primary shadow-xs'
                                     : isSaved
@@ -598,7 +598,7 @@ export default function CashbackSessionsPage() {
                               className="text-lg font-extrabold font-mono"
                               style={{ color: 'var(--color-secondary)' }}
                             >
-                              ₹{item.cashback_amnt.toFixed(2)}
+                              ${item.cashback_amnt.toFixed(2)}
                             </span>
                             <span
                               className="text-[10px] block mt-0.5"
@@ -676,7 +676,7 @@ export default function CashbackSessionsPage() {
                               type="button"
                               onClick={() => handleSaveStatus(item)}
                               disabled={isSaving}
-                              className={`btn-base text-xs py-2 px-3.5 flex items-center gap-1.5 ₹{
+                              className={`btn-base text-xs py-2 px-3.5 flex items-center gap-1.5 ${
                                 isDirty
                                   ? 'btn-primary shadow-xs'
                                   : isSaved

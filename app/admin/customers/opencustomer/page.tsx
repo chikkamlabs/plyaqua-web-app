@@ -283,7 +283,7 @@ function OpenCustomerContent() {
 
                   {/* Total Cashback */}
                   <div className="form-group">
-                    <label className="form-label">Total Cashback (₹)</label>
+                    <label className="form-label">Total Cashback ($)</label>
                     <input
                       type="number"
                       step="0.01"

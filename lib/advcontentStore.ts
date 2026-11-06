@@ -98,7 +98,7 @@ export async function uploadAdMedia(
 ): Promise<{ url: string | null; error: Error | null }> {
   const bucket = mediaType === 'video' ? 'adv_content_vid' : 'adv_content_img';
   const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-  const filePath = `₹{Date.now()}_₹{cleanFileName}`;
+  const filePath = `${Date.now()}_${cleanFileName}`;
 
   if (isPlaceholderConfig()) {
     // Demo mode: create browser blob URL for interactive testing
@@ -123,7 +123,7 @@ export async function uploadAdMedia(
       });
 
     if (uploadError) {
-      console.warn(`Supabase storage upload error in ₹{bucket}:`, uploadError.message);
+      console.warn(`Supabase storage upload error in ${bucket}:`, uploadError.message);
       // Fallback to local blob URL if bucket permissions are not yet configured
       if (typeof window !== 'undefined') {
         return { url: URL.createObjectURL(file), error: null };
@@ -240,7 +240,7 @@ export async function createAdContent(input: {
 
   const now = new Date().toISOString();
   const newAd: AdContent = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `ad-₹{Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `ad-${Date.now()}`,
     title: trimmedTitle,
     media_type: input.media_type,
     media_url: input.media_url,

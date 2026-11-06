@@ -107,7 +107,7 @@ function OpenBillContent() {
     setItems((prev) => [
       ...prev,
       {
-        id: `new-₹{Date.now()}-₹{Math.random()}`,
+        id: `new-${Date.now()}-${Math.random()}`,
         product_id: firstProd.id,
         product_name: firstProd.name,
         product_size: firstProd.size_value || 'Standard',
@@ -375,7 +375,7 @@ function OpenBillContent() {
 
                   {/* Balance */}
                   <div className="form-group">
-                    <label className="form-label">Outstanding Balance (₹)</label>
+                    <label className="form-label">Outstanding Balance ($)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -434,9 +434,9 @@ function OpenBillContent() {
                         <tr>
                           <th className="table-header-cell">Product</th>
                           <th className="table-header-cell">Size</th>
-                          <th className="table-header-cell w-32">Unit SP (₹)</th>
+                          <th className="table-header-cell w-32">Unit SP ($)</th>
                           <th className="table-header-cell w-28">Qty</th>
-                          <th className="table-header-cell w-32">Row Total (₹)</th>
+                          <th className="table-header-cell w-32">Row Total ($)</th>
                           <th className="table-header-cell w-12 text-center">Action</th>
                         </tr>
                       </thead>
@@ -483,7 +483,7 @@ function OpenBillContent() {
                             </td>
 
                             <td className="table-cell font-mono font-bold text-xs text-[var(--color-primary)]">
-                              ₹{item.row_total.toFixed(2)}
+                              ${item.row_total.toFixed(2)}
                             </td>
 
                             <td className="table-cell text-center">
@@ -512,7 +512,7 @@ function OpenBillContent() {
                     Calculated Total Invoice Amount:
                   </span>
                   <span className="text-xl font-bold font-mono text-[var(--color-primary)]">
-                    ₹{totalAmount.toFixed(2)}
+                    ${totalAmount.toFixed(2)}
                   </span>
                 </div>
               </div>

@@ -22,7 +22,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- ============================================================================
 -- Guarded creation of custom ENUM types to ensure repeatable execution.
 
-DO ₹₹
+DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role_enum') THEN
         CREATE TYPE public.user_role_enum AS ENUM ('admin', 'partner');
@@ -47,7 +47,7 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'points_trans_type') THEN
         CREATE TYPE public.points_trans_type AS ENUM ('add', 'delete');
     END IF;
-END ₹₹;
+END $$;
 
 -- ============================================================================
 -- 3. SECURE AUTHORIZATION HELPER FUNCTIONS
@@ -67,14 +67,14 @@ LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = public, auth
-AS ₹₹
+AS $$
     SELECT EXISTS (
         SELECT 1
         FROM public.users
         WHERE id = auth.uid()
           AND role = 'admin'::public.user_role_enum
     );
-₹₹;
+$$;
 
 COMMENT ON FUNCTION public.is_admin() IS 'Returns true if auth.uid() belongs to an active administrator in public.users.';
 
@@ -401,7 +401,7 @@ COMMENT ON TABLE public.customer_plays IS 'Gameplay activity records tracking se
 -- ============================================================================
 -- Explicitly applied to satisfy creation-order requirements cleanly.
 
-DO ₹₹
+DO $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_constraint WHERE conname = 'fk_customer_points_session'
@@ -426,7 +426,7 @@ BEGIN
             ADD CONSTRAINT fk_customer_cashback_session
             FOREIGN KEY (session_id) REFERENCES public.sessions(id) ON DELETE SET NULL;
     END IF;
-END ₹₹;
+END $$;
 
 -- ============================================================================
 -- 8. INDEXES
@@ -1090,12 +1090,12 @@ CREATE POLICY "playcodes_admin_all"
 CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS TRIGGER
 LANGUAGE plpgsql
-AS ₹₹
+AS $$
 BEGIN
     NEW.updated_at = now();
     RETURN NEW;
 END;
-₹₹;
+$$;
 COMMENT ON FUNCTION public.set_updated_at() IS 'Reusable trigger function to update updated_at timestamp on record modification.';
 
 -- 11.2 Optional Auth User Registration Profile Synchronization
@@ -1108,7 +1108,7 @@ RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public, auth
-AS ₹₹
+AS $$
 BEGIN
     INSERT INTO public.users (id, name, email, mobile, role)
     VALUES (
@@ -1121,7 +1121,7 @@ BEGIN
     ON CONFLICT (id) DO NOTHING;
     RETURN NEW;
 END;
-₹₹;
+$$;
 COMMENT ON FUNCTION public.handle_new_auth_user() IS 'Safely creates a default partner profile in public.users when a new user signs up in auth.users.';
 
 -- Trigger on auth.users:

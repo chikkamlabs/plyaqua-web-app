@@ -273,7 +273,7 @@ export async function createCampaign(input: {
 
   const now = new Date().toISOString();
   const newCamp: Campaign = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `camp-${Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `camp-₹{Date.now()}`,
     title: trimmedTitle,
     description: input.description,
     content_id: input.content_id,
@@ -314,8 +314,8 @@ export async function createCampaign(input: {
       longitude: input.longitude,
       radius_mtrs: input.radius_mtrs,
       location_enabled: input.location_enabled,
-      start_date: input.start_date ? `${input.start_date}T00:00:00.000Z` : null,
-      end_date: input.end_date ? `${input.end_date}T23:59:59.999Z` : null,
+      start_date: input.start_date ? `₹{input.start_date}T00:00:00.000Z` : null,
+      end_date: input.end_date ? `₹{input.end_date}T23:59:59.999Z` : null,
       max_views: input.max_views,
     };
 
@@ -419,8 +419,8 @@ export async function updateCampaign(
       longitude: updates.longitude,
       radius_mtrs: updates.radius_mtrs,
       location_enabled: updates.location_enabled,
-      start_date: updates.start_date ? `${updates.start_date}T00:00:00.000Z` : null,
-      end_date: updates.end_date ? `${updates.end_date}T23:59:59.999Z` : null,
+      start_date: updates.start_date ? `₹{updates.start_date}T00:00:00.000Z` : null,
+      end_date: updates.end_date ? `₹{updates.end_date}T23:59:59.999Z` : null,
       max_views: updates.max_views,
       updated_at: now,
     };

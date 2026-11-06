@@ -291,7 +291,7 @@ export default function ProfileCard({
                     Account Status
                   </span>
                   <span
-                    className={`status-chip ${
+                    className={`status-chip ₹{
                       profile.status === 'active'
                         ? 'status-chip-active'
                         : 'status-chip-inactive'

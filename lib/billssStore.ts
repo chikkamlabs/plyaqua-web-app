@@ -41,7 +41,7 @@ const LOCAL_ITEMS_KEY = 'plyaqua_bill_items_data';
 // Helper to generate bill_random(5 number): e.g. bill_74219
 export function generateRandomBillId(): string {
   const randomNum = Math.floor(10000 + Math.random() * 90000);
-  return `bill_${randomNum}`;
+  return `bill_₹{randomNum}`;
 }
 
 const getTodayString = (): string => {
@@ -291,11 +291,11 @@ export async function createBill(params: {
   const [partnersRes] = await Promise.all([getPartners()]);
   const partnerObj = partnersRes.data.find((p) => p.id === params.partner_id);
 
-  const newBillId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-bill-${Date.now()}`;
+  const newBillId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-bill-₹{Date.now()}`;
   const now = new Date().toISOString();
 
   const formattedItems: BillItem[] = params.items.map((it) => ({
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-item-${Date.now()}-${Math.random()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-item-₹{Date.now()}-₹{Math.random()}`,
     bill_id: newBillId,
     product_id: it.product_id,
     product_name: it.product_name || 'Product',
@@ -437,7 +437,7 @@ export async function updateBill(
         bill_date: updates.bill_date,
         updated_at: now,
         items: updates.items.map((it) => ({
-          id: it.id || `temp-item-${Date.now()}-${Math.random()}`,
+          id: it.id || `temp-item-₹{Date.now()}-₹{Math.random()}`,
           bill_id: id,
           product_id: it.product_id,
           product_name: it.product_name,

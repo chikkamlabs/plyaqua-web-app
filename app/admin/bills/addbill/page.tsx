@@ -368,7 +368,7 @@ function AddBillContent() {
                         }}
                       >
                         {selectedPartner
-                          ? `${selectedPartner.name} (${selectedPartner.partner_id})`
+                          ? `₹{selectedPartner.name} (₹{selectedPartner.partner_id})`
                           : 'Select billing partner...'}
                       </span>
                       <ChevronDown className="w-4 h-4 text-slate-400" />
@@ -433,7 +433,7 @@ function AddBillContent() {
 
                   {/* Balance */}
                   <div className="form-group">
-                    <label className="form-label">Outstanding Balance ($)</label>
+                    <label className="form-label">Outstanding Balance (₹)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -497,9 +497,9 @@ function AddBillContent() {
                         <tr>
                           <th className="table-header-cell">Product</th>
                           <th className="table-header-cell">Size</th>
-                          <th className="table-header-cell w-32">Unit SP ($)</th>
+                          <th className="table-header-cell w-32">Unit SP (₹)</th>
                           <th className="table-header-cell w-28">Qty</th>
-                          <th className="table-header-cell w-32">Row Total ($)</th>
+                          <th className="table-header-cell w-32">Row Total (₹)</th>
                           <th className="table-header-cell w-12 text-center">Action</th>
                         </tr>
                       </thead>
@@ -551,7 +551,7 @@ function AddBillContent() {
 
                             {/* Row Total */}
                             <td className="table-cell font-mono font-bold text-xs text-[var(--color-primary)]">
-                              ${item.row_total.toFixed(2)}
+                              ₹{item.row_total.toFixed(2)}
                             </td>
 
                             {/* Remove */}
@@ -581,7 +581,7 @@ function AddBillContent() {
                     Calculated Total Invoice Amount:
                   </span>
                   <span className="text-xl font-bold font-mono text-[var(--color-primary)]">
-                    ${totalAmount.toFixed(2)}
+                    ₹{totalAmount.toFixed(2)}
                   </span>
                 </div>
               </div>

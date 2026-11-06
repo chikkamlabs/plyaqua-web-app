@@ -215,7 +215,7 @@ export default function OpenCampaign({
               </h2>
               <div className="flex items-center gap-2 mt-0.5">
                 <span
-                  className={`status-chip ${
+                  className={`status-chip ₹{
                     (isEditing ? status : campaign.status) === 'active'
                       ? 'status-chip-active'
                       : 'status-chip-danger'
@@ -327,7 +327,7 @@ export default function OpenCampaign({
                       <div
                         key={ad.id}
                         onClick={() => setSelectedContentId(ad.id)}
-                        className={`p-2 rounded border cursor-pointer flex items-center justify-between ${
+                        className={`p-2 rounded border cursor-pointer flex items-center justify-between ₹{
                           isSelected ? 'bg-blue-50 border-blue-400 font-semibold' : 'bg-white hover:bg-slate-50'
                         }`}
                       >
@@ -637,7 +637,7 @@ export default function OpenCampaign({
                   <span>Location Targeting</span>
                 </span>
                 <span
-                  className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                  className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded ₹{
                     campaign.location_enabled
                       ? 'bg-emerald-100 text-emerald-800'
                       : 'bg-slate-200 text-slate-700'
@@ -671,7 +671,7 @@ export default function OpenCampaign({
                   <div>
                     <span className="text-[var(--color-text-muted)] block">Radius:</span>
                     <span className="font-bold text-[var(--color-text-primary)]">
-                      {campaign.radius_mtrs ? `${campaign.radius_mtrs.toLocaleString()}m` : '—'}
+                      {campaign.radius_mtrs ? `₹{campaign.radius_mtrs.toLocaleString()}m` : '—'}
                     </span>
                   </div>
                 </div>

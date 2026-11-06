@@ -79,7 +79,7 @@ export default function OpenMedia({
                   {ad.media_type.toUpperCase()}
                 </span>
                 <span
-                  className={`status-chip ${
+                  className={`status-chip ₹{
                     ad.status === 'active' ? 'status-chip-active' : 'status-chip-danger'
                   } text-[10px] py-0.5 px-2`}
                 >

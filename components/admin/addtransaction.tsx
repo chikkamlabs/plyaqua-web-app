@@ -211,7 +211,7 @@ export default function AddTransaction({
                     color: 'var(--color-primary)',
                   }}
                 >
-                  <span>${currentBalance.toFixed(2)}</span>
+                  <span>₹{currentBalance.toFixed(2)}</span>
                 </div>
                 <span className="form-helper">Existing partner ledger credit</span>
               </div>
@@ -222,7 +222,7 @@ export default function AddTransaction({
               {/* Amount */}
               <div className="form-group">
                 <label className="form-label">
-                  Amount ($) <span className="text-[var(--color-danger)]">*</span>
+                  Amount (₹) <span className="text-[var(--color-danger)]">*</span>
                 </label>
                 <input
                   type="number"
@@ -269,9 +269,9 @@ export default function AddTransaction({
                     color: calculatedBalance < 0 ? 'var(--color-danger-text)' : 'var(--color-primary)',
                   }}
                 >
-                  <span>${calculatedBalance.toFixed(2)}</span>
+                  <span>₹{calculatedBalance.toFixed(2)}</span>
                   <span className="text-[10px] font-normal text-[var(--color-text-muted)]">
-                    ${currentBalance.toFixed(2)} - ${numericAmount.toFixed(2)}
+                    ₹{currentBalance.toFixed(2)} - ₹{numericAmount.toFixed(2)}
                   </span>
                 </div>
                 <span className="form-helper">

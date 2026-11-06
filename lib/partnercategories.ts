@@ -90,7 +90,7 @@ const setLocalCategories = (categories: PartnerCategory[]) => {
  * Calculates auto-fill ID formula: p_cat_101 + length of partner categories
  */
 export function calculateNextCategoryId(currentLength: number): string {
-  return `p_cat_${101 + currentLength}`;
+  return `p_cat_₹{101 + currentLength}`;
 }
 
 /**
@@ -101,7 +101,7 @@ export async function uploadPartnerCategoryImage(
 ): Promise<{ url: string | null; error: Error | null }> {
   const bucket = 'partner_catergory_images';
   const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-  const filePath = `cat_${Date.now()}_${cleanFileName}`;
+  const filePath = `cat_₹{Date.now()}_₹{cleanFileName}`;
 
   if (isPlaceholderConfig()) {
     if (typeof window !== 'undefined') {
@@ -122,7 +122,7 @@ export async function uploadPartnerCategoryImage(
       });
 
     if (uploadError) {
-      console.warn(`Supabase storage upload error in ${bucket}:`, uploadError.message);
+      console.warn(`Supabase storage upload error in ₹{bucket}:`, uploadError.message);
       if (typeof window !== 'undefined') {
         return { url: URL.createObjectURL(file), error: null };
       }
@@ -219,7 +219,7 @@ export async function createPartnerCategory(categoryData: {
   const current = getLocalCategories();
   const desc = categoryData.descripiton || null;
   const newLocalItem: PartnerCategory = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-${Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `temp-₹{Date.now()}`,
     p_cat_id: categoryData.p_cat_id,
     name: categoryData.name,
     status: categoryData.status,

@@ -110,7 +110,7 @@ function OpenPurchaseContent() {
 
       if (invRes.error) {
         setUpdating(false);
-        setErrorMsg(`Purchase accepted, but inventory update failed: ${invRes.error.message}`);
+        setErrorMsg(`Purchase accepted, but inventory update failed: ₹{invRes.error.message}`);
         return;
       }
     }
@@ -376,7 +376,7 @@ function OpenPurchaseContent() {
                     className="font-mono font-bold text-sm sm:text-base block mt-0.5"
                     style={{ color: 'var(--color-primary)' }}
                   >
-                    ${purchase.amount.toFixed(2)}
+                    ₹{purchase.amount.toFixed(2)}
                   </span>
                 </div>
 
@@ -398,7 +398,7 @@ function OpenPurchaseContent() {
                     className="font-mono font-semibold text-sm block mt-0.5"
                     style={{ color: 'var(--color-text-primary)' }}
                   >
-                    ${purchase.balance.toFixed(2)}
+                    ₹{purchase.balance.toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -473,9 +473,9 @@ function OpenPurchaseContent() {
                       <tr>
                         <th className="table-header-cell">Product</th>
                         <th className="table-header-cell">Size</th>
-                        <th className="table-header-cell text-right">Unit SP ($)</th>
+                        <th className="table-header-cell text-right">Unit SP (₹)</th>
                         <th className="table-header-cell text-right">Qty</th>
-                        <th className="table-header-cell text-right">Row Total ($)</th>
+                        <th className="table-header-cell text-right">Row Total (₹)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -494,7 +494,7 @@ function OpenPurchaseContent() {
                             {item.product_size || 'Standard'}
                           </td>
                           <td className="table-cell font-mono text-right text-xs">
-                            ${item.sp.toFixed(2)}
+                            ₹{item.sp.toFixed(2)}
                           </td>
                           <td className="table-cell font-bold text-right text-xs">
                             {item.qty}
@@ -503,7 +503,7 @@ function OpenPurchaseContent() {
                             className="table-cell font-mono font-bold text-right text-xs"
                             style={{ color: 'var(--color-primary)' }}
                           >
-                            ${item.row_total.toFixed(2)}
+                            ₹{item.row_total.toFixed(2)}
                           </td>
                         </tr>
                       ))}
@@ -525,7 +525,7 @@ function OpenPurchaseContent() {
                           className="table-cell font-mono font-bold text-right text-sm"
                           style={{ color: 'var(--color-primary)' }}
                         >
-                          ${purchase.amount.toFixed(2)}
+                          ₹{purchase.amount.toFixed(2)}
                         </td>
                       </tr>
                     </tfoot>

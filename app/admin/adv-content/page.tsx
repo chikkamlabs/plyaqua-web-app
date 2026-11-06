@@ -268,7 +268,7 @@ export default function AdvContentPage() {
                           {/* Status */}
                           <td className="table-cell">
                             <span
-                              className={`status-chip ${
+                              className={`status-chip ₹{
                                 ad.status === 'active'
                                   ? 'status-chip-active'
                                   : 'status-chip-danger'
@@ -329,7 +329,7 @@ export default function AdvContentPage() {
                           {ad.title}
                         </div>
                         <span
-                          className={`status-chip shrink-0 ${
+                          className={`status-chip shrink-0 ₹{
                             ad.status === 'active'
                               ? 'status-chip-active'
                               : 'status-chip-danger'

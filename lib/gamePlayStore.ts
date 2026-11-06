@@ -83,7 +83,7 @@ function setLocal<T>(key: string, data: T[]): void {
   try {
     localStorage.setItem(key, JSON.stringify(data));
   } catch (e) {
-    console.error(`Failed to save ${key} to localStorage:`, e);
+    console.error(`Failed to save ₹{key} to localStorage:`, e);
   }
 }
 
@@ -128,7 +128,7 @@ export async function addGameWord(
 
   const nowIso = new Date().toISOString();
   const newWord: GameWord = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `gw-${Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `gw-₹{Date.now()}`,
     name: trimmed,
     status,
     created_at: nowIso,
@@ -280,7 +280,7 @@ export async function addGamePoint(
 
   const nowIso = new Date().toISOString();
   const newPoint: GamePoint = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `gp-${Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `gp-₹{Date.now()}`,
     values: Number(values) || 0,
     name: trimmed,
     created_at: nowIso,
@@ -438,7 +438,7 @@ export async function addGameCashback(
 
   const nowIso = new Date().toISOString();
   const newCashback: GameCashback = {
-    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `gc-${Date.now()}`,
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `gc-₹{Date.now()}`,
     range_from: fromNum,
     range_to: toNum,
     created_at: nowIso,

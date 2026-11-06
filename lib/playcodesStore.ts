@@ -16,8 +16,8 @@ const LOCAL_STORAGE_KEY = 'plyaqua_playcodes_data';
 const initialDemoPlaycodes: Playcode[] = Array.from({ length: 25 }, (_, idx) => {
   const num = 1001 + idx;
   return {
-    id: `pc-${num}`,
-    code: `ply-${num}`,
+    id: `pc-₹{num}`,
+    code: `ply-₹{num}`,
     status: 'active' as PlaycodeStatus,
     created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
     updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
@@ -152,7 +152,7 @@ export async function generateAndInsertPlaycodes(
   const recordsToInsert: Array<{ code: string; status: PlaycodeStatus }> = [];
 
   for (let num = from; num <= to; num++) {
-    const codeStr = `ply-${num}`;
+    const codeStr = `ply-₹{num}`;
     generatedCodes.push(codeStr);
     recordsToInsert.push({
       code: codeStr,
@@ -169,7 +169,7 @@ export async function generateAndInsertPlaycodes(
     const now = new Date().toISOString();
     recordsToInsert.forEach((rec, idx) => {
       existingMap.set(rec.code, {
-        id: `pc-${from + idx}-${Date.now()}`,
+        id: `pc-₹{from + idx}-₹{Date.now()}`,
         code: rec.code,
         status: rec.status,
         created_at: now,
@@ -211,7 +211,7 @@ export async function generateAndInsertPlaycodes(
           const now = new Date().toISOString();
           recordsToInsert.forEach((rec, idx) => {
             existingMap.set(rec.code, {
-              id: `pc-${from + idx}-${Date.now()}`,
+              id: `pc-₹{from + idx}-₹{Date.now()}`,
               code: rec.code,
               status: rec.status,
               created_at: now,
@@ -236,7 +236,7 @@ export async function generateAndInsertPlaycodes(
     const now = new Date().toISOString();
     recordsToInsert.forEach((rec, idx) => {
       existingMap.set(rec.code, {
-        id: `pc-${from + idx}`,
+        id: `pc-₹{from + idx}`,
         code: rec.code,
         status: rec.status,
         created_at: now,
@@ -261,7 +261,7 @@ export async function generateAndInsertPlaycodes(
     const now = new Date().toISOString();
     recordsToInsert.forEach((rec, idx) => {
       existingMap.set(rec.code, {
-        id: `pc-${from + idx}`,
+        id: `pc-₹{from + idx}`,
         code: rec.code,
         status: rec.status,
         created_at: now,

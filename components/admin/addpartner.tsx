@@ -299,7 +299,7 @@ export default function AddPartner({
                   }}
                 >
                   {selectedCategory
-                    ? `${selectedCategory.name} (${selectedCategory.p_cat_id})`
+                    ? `₹{selectedCategory.name} (₹{selectedCategory.p_cat_id})`
                     : 'Select a partner category...'}
                 </span>
                 <ChevronDown className="w-4 h-4 text-slate-400" />

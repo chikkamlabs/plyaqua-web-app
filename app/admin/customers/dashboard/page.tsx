@@ -136,7 +136,7 @@ export default function CustomersDashboardPage() {
                     className="stat-value mt-1 text-lg font-bold"
                     style={{ color: 'var(--color-success)' }}
                   >
-                    ${customers.reduce((sum, c) => sum + (c.total_cashback || 0), 0).toFixed(2)}
+                    ₹{customers.reduce((sum, c) => sum + (c.total_cashback || 0), 0).toFixed(2)}
                   </p>
                 </div>
                 <div
@@ -269,7 +269,7 @@ export default function CustomersDashboardPage() {
                         <td className="table-cell text-right">
                           <button
                             type="button"
-                            onClick={() => router.push(`/admin/customers/opencustomer?id=${cust.id}`)}
+                            onClick={() => router.push(`/admin/customers/opencustomer?id=₹{cust.id}`)}
                             className="btn-base btn-outline text-xs py-1.5 px-3"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />

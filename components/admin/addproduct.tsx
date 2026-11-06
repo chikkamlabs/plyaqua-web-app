@@ -269,7 +269,7 @@ export default function AddProduct({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="form-group">
                 <label className="form-label">
-                  MRP ($) (Maximum Retail Price) <span className="text-[var(--color-danger)]">*</span>
+                  MRP (₹) (Maximum Retail Price) <span className="text-[var(--color-danger)]">*</span>
                 </label>
                 <input
                   type="number"
@@ -285,7 +285,7 @@ export default function AddProduct({
 
               <div className="form-group">
                 <label className="form-label">
-                  Selling Price ($) (SP) <span className="text-[var(--color-danger)]">*</span>
+                  Selling Price (₹) (SP) <span className="text-[var(--color-danger)]">*</span>
                 </label>
                 <input
                   type="number"

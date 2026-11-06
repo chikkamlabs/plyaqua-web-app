@@ -83,7 +83,7 @@ export default function CreateCodes({
       }
 
       setSuccessMessage(
-        `Successfully generated and activated ${res.count} playcodes (ply-${numFrom} to ply-${numTo})!`
+        `Successfully generated and activated ₹{res.count} playcodes (ply-₹{numFrom} to ply-₹{numTo})!`
       );
 
       if (onCodesCreated) {

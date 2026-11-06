@@ -526,7 +526,7 @@ export default function GamePlayDashboardPage() {
                       >
                         <span className="text-[var(--color-text-secondary)]">Range:</span>
                         <span className="font-mono font-bold" style={{ color: 'var(--color-success-text)' }}>
-                          ${Number(c.range_from).toFixed(2)} → ${Number(c.range_to).toFixed(2)}
+                          ₹{Number(c.range_from).toFixed(2)} → ₹{Number(c.range_to).toFixed(2)}
                         </span>
                       </div>
                     ))}
@@ -1132,7 +1132,7 @@ export default function GamePlayDashboardPage() {
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
                   <div className="form-group">
-                    <label className="form-label text-[11px]">Range From ($)</label>
+                    <label className="form-label text-[11px]">Range From (₹)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -1144,7 +1144,7 @@ export default function GamePlayDashboardPage() {
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label text-[11px]">Range To ($)</label>
+                    <label className="form-label text-[11px]">Range To (₹)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -1173,8 +1173,8 @@ export default function GamePlayDashboardPage() {
                 <table className="table-base">
                   <thead className="table-header">
                     <tr>
-                      <th className="table-header-cell">Range From ($)</th>
-                      <th className="table-header-cell">Range To ($)</th>
+                      <th className="table-header-cell">Range From (₹)</th>
+                      <th className="table-header-cell">Range To (₹)</th>
                       <th className="table-header-cell">Formatted Interval</th>
                       <th className="table-header-cell text-right w-28">Actions</th>
                     </tr>
@@ -1205,7 +1205,7 @@ export default function GamePlayDashboardPage() {
                                 />
                               ) : (
                                 <span className="font-mono font-medium text-xs">
-                                  ${Number(c.range_from).toFixed(2)}
+                                  ₹{Number(c.range_from).toFixed(2)}
                                 </span>
                               )}
                             </td>
@@ -1223,7 +1223,7 @@ export default function GamePlayDashboardPage() {
                                 />
                               ) : (
                                 <span className="font-mono font-medium text-xs">
-                                  ${Number(c.range_to).toFixed(2)}
+                                  ₹{Number(c.range_to).toFixed(2)}
                                 </span>
                               )}
                             </td>
@@ -1231,7 +1231,7 @@ export default function GamePlayDashboardPage() {
                             {/* Formatted */}
                             <td className="table-cell">
                               <span className="badge-base badge-success font-mono font-bold text-xs">
-                                ${Number(c.range_from).toFixed(2)} – ${Number(c.range_to).toFixed(2)}
+                                ₹{Number(c.range_from).toFixed(2)} – ₹{Number(c.range_to).toFixed(2)}
                               </span>
                             </td>
 

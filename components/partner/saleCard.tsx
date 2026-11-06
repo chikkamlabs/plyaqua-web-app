@@ -130,7 +130,7 @@ export default function SaleCard({
 
     if (currentItem && qtyNumber > currentItem.qty) {
       setErrorMsg(
-        `Insufficient inventory. Only ${currentItem.qty} units available in stock.`
+        `Insufficient inventory. Only ₹{currentItem.qty} units available in stock.`
       );
       return;
     }
@@ -153,7 +153,7 @@ export default function SaleCard({
     }
 
     setSuccessMsg(
-      `Sale recorded successfully! ${qtyNumber} bottle(s) sold. Stock decreased and points ledger updated.`
+      `Sale recorded successfully! ₹{qtyNumber} bottle(s) sold. Stock decreased and points ledger updated.`
     );
 
     // Refresh inventory in modal
@@ -352,7 +352,7 @@ export default function SaleCard({
                         <div
                           key={item.product_id}
                           onClick={() => setSelectedProductId(item.product_id)}
-                          className={`p-3 rounded-[var(--radius-md)] border cursor-pointer transition-all flex items-center justify-between ${
+                          className={`p-3 rounded-[var(--radius-md)] border cursor-pointer transition-all flex items-center justify-between ₹{
                             isSelected ? 'ring-2' : 'hover:bg-slate-50'
                           }`}
                           style={{

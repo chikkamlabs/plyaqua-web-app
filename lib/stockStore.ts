@@ -365,7 +365,7 @@ export async function addPurchaseToPartnerInventory(
     } else {
       const pInfo = prodMap.get(item.product_id);
       currentLocal.push({
-        id: `inv-${Date.now()}-${Math.random()}`,
+        id: `inv-₹{Date.now()}-₹{Math.random()}`,
         partner_id: effectivePartnerId,
         product_id: item.product_id,
         prod_id: pInfo?.prod_id || 'prod_101',
@@ -490,7 +490,7 @@ export async function recordPartnerSale(params: {
   const prodSize = targetItem?.size || '';
   const saleNote =
     notes?.trim() ||
-    `Sale of ${saleQty} item(s) recorded: ${prodName}${prodSize ? ` (${prodSize})` : ''}.`;
+    `Sale of ₹{saleQty} item(s) recorded: ₹{prodName}₹{prodSize ? ` (₹{prodSize})` : ''}.`;
 
   // Update local points ledger in localStorage
   if (typeof window !== 'undefined') {
@@ -504,7 +504,7 @@ export async function recordPartnerSale(params: {
       }
     }
     const newTx: PartnerPointTransaction = {
-      id: `pt-${Date.now()}`,
+      id: `pt-₹{Date.now()}`,
       partner_id: effectivePartnerId,
       type: 'add',
       points: saleQty,
@@ -559,7 +559,7 @@ export async function recordPartnerSale(params: {
 
       if (updErr) {
         console.error('Error decreasing partner_inventory quantity:', updErr.message);
-        return { success: false, error: new Error(`Failed to decrease inventory: ${updErr.message}`) };
+        return { success: false, error: new Error(`Failed to decrease inventory: ₹{updErr.message}`) };
       }
     } else {
       console.warn('Inventory record not found in Supabase for partner_id & product_id:', effectivePartnerId, effectiveProductId);
@@ -576,7 +576,7 @@ export async function recordPartnerSale(params: {
 
     if (pointsErr) {
       console.error('Error inserting into partner_points:', pointsErr.message);
-      return { success: false, error: new Error(`Failed to record points transaction: ${pointsErr.message}`) };
+      return { success: false, error: new Error(`Failed to record points transaction: ₹{pointsErr.message}`) };
     }
 
     // 3. Update public.partner_profile available_points and total_points
@@ -590,7 +590,7 @@ export async function recordPartnerSale(params: {
 
     if (profileErr) {
       console.error('Error updating partner_profile points:', profileErr.message);
-      return { success: false, error: new Error(`Failed to update profile points: ${profileErr.message}`) };
+      return { success: false, error: new Error(`Failed to update profile points: ₹{profileErr.message}`) };
     }
 
     return { success: true, newAvailablePoints: newAvlPoints, error: null };

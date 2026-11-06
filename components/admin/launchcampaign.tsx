@@ -327,7 +327,7 @@ export default function LaunchCampaign({
                     <div
                       key={ad.id}
                       onClick={() => setSelectedContentId(ad.id)}
-                      className={`p-2.5 rounded-[var(--radius-md)] border cursor-pointer transition-all flex items-center justify-between ${
+                      className={`p-2.5 rounded-[var(--radius-md)] border cursor-pointer transition-all flex items-center justify-between ₹{
                         isSelected ? 'ring-2' : 'hover:bg-slate-50'
                       }`}
                       style={{
@@ -585,7 +585,7 @@ export default function LaunchCampaign({
                 className="rounded text-[var(--color-secondary)] focus:ring-[var(--color-secondary)] w-4 h-4"
               />
               <span
-                className={`status-chip text-[10px] py-0.5 px-2 ${
+                className={`status-chip text-[10px] py-0.5 px-2 ₹{
                   statusActive ? 'status-chip-active' : 'status-chip-danger'
                 }`}
               >

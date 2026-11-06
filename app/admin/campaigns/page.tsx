@@ -269,7 +269,7 @@ export default function CampaignsPage() {
                           {/* Status */}
                           <td className="table-cell">
                             <span
-                              className={`status-chip ${
+                              className={`status-chip ₹{
                                 camp.status === 'active'
                                   ? 'status-chip-active'
                                   : 'status-chip-danger'
@@ -331,7 +331,7 @@ export default function CampaignsPage() {
                           {camp.title}
                         </span>
                         <span
-                          className={`status-chip shrink-0 ${
+                          className={`status-chip shrink-0 ₹{
                             camp.status === 'active'
                               ? 'status-chip-active'
                               : 'status-chip-danger'

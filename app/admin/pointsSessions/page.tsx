@@ -456,7 +456,7 @@ function PointsSessionsContent() {
                         key={pageNum}
                         type="button"
                         onClick={() => setCurrentPage(pageNum)}
-                        className={`w-7 h-7 text-xs font-mono rounded-[var(--radius-sm)] flex items-center justify-center transition-colors ${
+                        className={`w-7 h-7 text-xs font-mono rounded-[var(--radius-sm)] flex items-center justify-center transition-colors ₹{
                           currentPage === pageNum
                             ? 'font-bold bg-[var(--color-secondary)] text-white'
                             : 'border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-muted)]'

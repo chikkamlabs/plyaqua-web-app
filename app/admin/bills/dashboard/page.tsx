@@ -177,7 +177,7 @@ export default function BillsDashboardPage() {
                     className="stat-value mt-1"
                     style={{ color: 'var(--color-success)' }}
                   >
-                    ${totalInvoicedToday.toFixed(2)}
+                    ₹{totalInvoicedToday.toFixed(2)}
                   </p>
                 </div>
                 <div
@@ -376,7 +376,7 @@ export default function BillsDashboardPage() {
                               {b.partner_name || 'Partner'}
                             </span>
                             <span className="text-xs text-[var(--color-text-muted)] block">
-                              {b.partner_mobile} {b.partner_category_name && `• ${b.partner_category_name}`}
+                              {b.partner_mobile} {b.partner_category_name && `• ₹{b.partner_category_name}`}
                             </span>
                           </div>
                         </td>
@@ -399,7 +399,7 @@ export default function BillsDashboardPage() {
                                     {it.product_size}
                                   </span>
                                   <span className="text-[var(--color-text-muted)]">
-                                    × {it.qty} @ ${it.sp}
+                                    × {it.qty} @ ₹{it.sp}
                                   </span>
                                 </div>
                               ))}
@@ -416,12 +416,12 @@ export default function BillsDashboardPage() {
 
                         {/* Amount */}
                         <td className="table-cell font-mono font-bold text-xs text-[var(--color-primary)]">
-                          ${b.amount.toFixed(2)}
+                          ₹{b.amount.toFixed(2)}
                         </td>
 
                         {/* Balance */}
                         <td className="table-cell font-mono text-xs text-[var(--color-text-secondary)]">
-                          ${b.balance.toFixed(2)}
+                          ₹{b.balance.toFixed(2)}
                         </td>
 
                         {/* Status */}
@@ -445,7 +445,7 @@ export default function BillsDashboardPage() {
                         <td className="table-cell text-right">
                           <button
                             type="button"
-                            onClick={() => router.push(`/admin/bills/openbill?id=${b.id}`)}
+                            onClick={() => router.push(`/admin/bills/openbill?id=₹{b.id}`)}
                             className="btn-base btn-outline text-xs py-1.5 px-3"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />

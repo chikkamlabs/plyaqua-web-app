@@ -135,7 +135,7 @@ export default function PartnerDashboardPage() {
               >
                 {loading
                   ? '...'
-                  : `${pointsSummary?.available_points?.toLocaleString() ?? 0} pts`}
+                  : `₹{pointsSummary?.available_points?.toLocaleString() ?? 0} pts`}
               </span>
             </div>
             <ChevronRight

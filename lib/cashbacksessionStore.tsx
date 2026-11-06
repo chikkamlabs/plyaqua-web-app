@@ -60,7 +60,7 @@ export function getTodayDateString(): string {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return `₹{year}-₹{month}-₹{day}`;
 }
 
 const isPlaceholderConfig = () => {
@@ -94,8 +94,8 @@ function getInitialDemoCashbacks(): CashbackSessionItem[] {
       playcode_id: 'pc-101',
       plycode: 'PLY-8492',
       session_id: 'sess-today-001',
-      created_at: `${today}T10:15:30.000Z`,
-      created_at_ist: formatToIST(`${today}T10:15:30.000Z`),
+      created_at: `₹{today}T10:15:30.000Z`,
+      created_at_ist: formatToIST(`₹{today}T10:15:30.000Z`),
     },
     {
       id: 'cb-002',
@@ -108,8 +108,8 @@ function getInitialDemoCashbacks(): CashbackSessionItem[] {
       playcode_id: 'pc-102',
       plycode: 'PLY-9120',
       session_id: 'sess-today-002',
-      created_at: `${today}T11:42:15.000Z`,
-      created_at_ist: formatToIST(`${today}T11:42:15.000Z`),
+      created_at: `₹{today}T11:42:15.000Z`,
+      created_at_ist: formatToIST(`₹{today}T11:42:15.000Z`),
     },
     {
       id: 'cb-003',
@@ -122,8 +122,8 @@ function getInitialDemoCashbacks(): CashbackSessionItem[] {
       playcode_id: 'pc-103',
       plycode: 'PLY-7341',
       session_id: 'sess-today-003',
-      created_at: `${today}T14:20:00.000Z`,
-      created_at_ist: formatToIST(`${today}T14:20:00.000Z`),
+      created_at: `₹{today}T14:20:00.000Z`,
+      created_at_ist: formatToIST(`₹{today}T14:20:00.000Z`),
     },
     {
       id: 'cb-004',
@@ -136,8 +136,8 @@ function getInitialDemoCashbacks(): CashbackSessionItem[] {
       playcode_id: 'pc-104',
       plycode: 'PLY-6632',
       session_id: 'sess-today-004',
-      created_at: `${today}T15:05:40.000Z`,
-      created_at_ist: formatToIST(`${today}T15:05:40.000Z`),
+      created_at: `₹{today}T15:05:40.000Z`,
+      created_at_ist: formatToIST(`₹{today}T15:05:40.000Z`),
     },
     {
       id: 'cb-005',
@@ -150,8 +150,8 @@ function getInitialDemoCashbacks(): CashbackSessionItem[] {
       playcode_id: 'pc-105',
       plycode: 'PLY-5521',
       session_id: 'sess-yest-001',
-      created_at: `${yesterday}T16:30:00.000Z`,
-      created_at_ist: formatToIST(`${yesterday}T16:30:00.000Z`),
+      created_at: `₹{yesterday}T16:30:00.000Z`,
+      created_at_ist: formatToIST(`₹{yesterday}T16:30:00.000Z`),
     },
     {
       id: 'cb-006',
@@ -164,8 +164,8 @@ function getInitialDemoCashbacks(): CashbackSessionItem[] {
       playcode_id: 'pc-106',
       plycode: 'PLY-4412',
       session_id: 'sess-yest-002',
-      created_at: `${twoDaysAgo}T09:12:00.000Z`,
-      created_at_ist: formatToIST(`${twoDaysAgo}T09:12:00.000Z`),
+      created_at: `₹{twoDaysAgo}T09:12:00.000Z`,
+      created_at_ist: formatToIST(`₹{twoDaysAgo}T09:12:00.000Z`),
     },
   ];
 }
@@ -253,10 +253,10 @@ export async function getCashbackSessions(filters?: CashbackFilters): Promise<{
       .order('created_at', { ascending: false });
 
     if (filters?.fromDate) {
-      query = query.gte('created_at', `${filters.fromDate}T00:00:00.000Z`);
+      query = query.gte('created_at', `₹{filters.fromDate}T00:00:00.000Z`);
     }
     if (filters?.toDate) {
-      query = query.lte('created_at', `${filters.toDate}T23:59:59.999Z`);
+      query = query.lte('created_at', `₹{filters.toDate}T23:59:59.999Z`);
     }
 
     const { data: cbData, error: cbErr } = await query;

@@ -88,7 +88,7 @@ export default function PartnerInventoryDashboardPage() {
 
             const cardInner = (
               <div
-                className={`card-base p-5 flex flex-col justify-between h-full transition-all rounded-[var(--radius-lg)] border ${
+                className={`card-base p-5 flex flex-col justify-between h-full transition-all rounded-[var(--radius-lg)] border ₹{
                   item.isClickable ? 'card-interactive' : 'opacity-90'
                 }`}
                 style={{
@@ -151,7 +151,7 @@ export default function PartnerInventoryDashboardPage() {
                   key={item.title}
                   href={item.href}
                   className="focus:outline-none block"
-                  aria-label={`Open ${item.title}`}
+                  aria-label={`Open ₹{item.title}`}
                 >
                   {cardInner}
                 </Link>

@@ -400,7 +400,7 @@ export default function PartnerPurchasesPage() {
                           className="text-sm sm:text-base font-extrabold font-mono"
                           style={{ color: 'var(--color-primary)' }}
                         >
-                          ${purchase.amount.toFixed(2)}
+                          ₹{purchase.amount.toFixed(2)}
                         </span>
                       </div>
 
@@ -450,10 +450,10 @@ export default function PartnerPurchasesPage() {
                       <button
                         type="button"
                         onClick={() =>
-                          router.push(`/partner/inventory/openpurchase?id=${purchase.id}`)
+                          router.push(`/partner/inventory/openpurchase?id=₹{purchase.id}`)
                         }
                         className="btn-base btn-primary text-xs py-1.5 px-4 flex items-center gap-1.5 w-full sm:w-auto justify-center"
-                        aria-label={`Open purchase ${purchase.bill_id}`}
+                        aria-label={`Open purchase ₹{purchase.bill_id}`}
                       >
                         <span>Open Details</span>
                         <ChevronRight className="w-3.5 h-3.5" />

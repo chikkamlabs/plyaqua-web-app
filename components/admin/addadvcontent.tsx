@@ -82,7 +82,7 @@ export default function AddAdvContent({
     }
 
     if (!file) {
-      setError(`Please upload a ${mediaType} file.`);
+      setError(`Please upload a ₹{mediaType} file.`);
       return;
     }
 
@@ -232,7 +232,7 @@ export default function AddAdvContent({
               <button
                 type="button"
                 onClick={() => handleMediaTypeChange('image')}
-                className={`p-3 rounded-[var(--radius-md)] border flex items-center gap-2.5 transition-all text-left ${
+                className={`p-3 rounded-[var(--radius-md)] border flex items-center gap-2.5 transition-all text-left ₹{
                   mediaType === 'image' ? 'ring-2' : 'hover:bg-slate-50'
                 }`}
                 style={{
@@ -274,7 +274,7 @@ export default function AddAdvContent({
               <button
                 type="button"
                 onClick={() => handleMediaTypeChange('video')}
-                className={`p-3 rounded-[var(--radius-md)] border flex items-center gap-2.5 transition-all text-left ${
+                className={`p-3 rounded-[var(--radius-md)] border flex items-center gap-2.5 transition-all text-left ₹{
                   mediaType === 'video' ? 'ring-2' : 'hover:bg-slate-50'
                 }`}
                 style={{

@@ -9,6 +9,7 @@ import {
   formatDateYMD,
   getCustomerPointReqs,
   updateCustomerPointReq,
+  downloadCustomerPointReqsExcel,
 } from '@/lib/pointsrequestions';
 import {
   Coins,
@@ -29,6 +30,7 @@ import {
   Check,
   Loader2,
   Sparkles,
+  Download,
 } from 'lucide-react';
 
 export default function CustomerPointsReqPage() {
@@ -290,28 +292,40 @@ export default function CustomerPointsReqPage() {
               </p>
             </div>
 
-            {/* Total Requests Stat Card (Count as per filtered dates applied) */}
-            <div
-              className="card-base p-4 sm:p-5 flex items-center justify-between sm:justify-start gap-4 min-w-[240px] border border-[var(--color-border)] shadow-xs"
-              style={{ backgroundColor: 'var(--color-surface)' }}
-            >
-              <div className="space-y-0.5">
-                <p className="label-text">Total Requests</p>
-                <p className="stat-value text-2xl sm:text-3xl font-bold" style={{ color: 'var(--color-secondary)' }}>
-                  {requests.length}
-                </p>
-                <p className="small-text text-[var(--color-text-muted)]">
-                  Count for filtered dates applied
-                </p>
-              </div>
-              <div
-                className="w-11 h-11 rounded-[var(--radius-lg)] flex items-center justify-center flex-shrink-0"
-                style={{
-                  backgroundColor: 'var(--color-secondary-light)',
-                  color: 'var(--color-secondary)',
-                }}
+            {/* Download Button & Total Requests Stat Card (Count as per filtered dates applied) */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <button
+                type="button"
+                onClick={() => downloadCustomerPointReqsExcel(requests)}
+                disabled={loading || isPending || requests.length === 0}
+                className="btn-base btn-outline shadow-xs"
               >
-                <Coins className="w-6 h-6" />
+                <Download className="w-4 h-4" />
+                <span>Download</span>
+              </button>
+
+              <div
+                className="card-base p-4 sm:p-5 flex items-center justify-between sm:justify-start gap-4 min-w-[240px] border border-[var(--color-border)] shadow-xs"
+                style={{ backgroundColor: 'var(--color-surface)' }}
+              >
+                <div className="space-y-0.5">
+                  <p className="label-text">Total Requests</p>
+                  <p className="stat-value text-2xl sm:text-3xl font-bold" style={{ color: 'var(--color-secondary)' }}>
+                    {requests.length}
+                  </p>
+                  <p className="small-text text-[var(--color-text-muted)]">
+                    Count for filtered dates applied
+                  </p>
+                </div>
+                <div
+                  className="w-11 h-11 rounded-[var(--radius-lg)] flex items-center justify-center flex-shrink-0"
+                  style={{
+                    backgroundColor: 'var(--color-secondary-light)',
+                    color: 'var(--color-secondary)',
+                  }}
+                >
+                  <Coins className="w-6 h-6" />
+                </div>
               </div>
             </div>
           </div>

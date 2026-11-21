@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 import { supabase } from './supabase';
 
 export interface Customer {
@@ -238,4 +239,36 @@ export async function updateCustomer(
       error: err instanceof Error ? err : new Error('Failed to update customer'),
     };
   }
+}
+
+/**
+ * Download customers list as an Excel (.xlsx) file
+ */
+export function downloadCustomersExcel(customers: Customer[]): void {
+  const rows = customers.map((c) => ({
+    name: c.name,
+    mobile: c.mobile || '',
+    available_points: c.available_points ?? 0,
+    total_cashbacks: Number(c.total_cashback) || 0,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Customers');
+
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'customers.xlsx';
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

@@ -13,6 +13,7 @@ import {
 } from '@/lib/billssStore';
 import { getPartners, Partner } from '@/lib/partnersStore';
 import { getProducts, Product } from '@/lib/productsStore';
+import { generateSaleBillPdf } from '@/lib/generateSalebill';
 import {
   ArrowLeft,
   Save,
@@ -25,6 +26,7 @@ import {
   AlertCircle,
   Calendar,
   FileText,
+  Download,
 } from 'lucide-react';
 
 function OpenBillContent() {
@@ -38,6 +40,7 @@ function OpenBillContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -214,6 +217,26 @@ function OpenBillContent() {
     setTimeout(() => setSuccessMsg(null), 4000);
   };
 
+  const handleDownloadPdf = async () => {
+    if (!bill) return;
+    setDownloadingPdf(true);
+    try {
+      const selectedPartner = partners.find((p) => p.id === partnerId) || null;
+      await generateSaleBillPdf({
+        bill,
+        items,
+        partner: selectedPartner,
+        billDate,
+        status,
+        balance,
+        notes,
+        totalAmount,
+      });
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
+
   return (
     <div
       className="min-h-screen flex flex-col"
@@ -237,9 +260,24 @@ function OpenBillContent() {
             </button>
 
             {bill && (
-              <span className="font-mono text-xs px-2.5 py-1 rounded-[var(--radius-sm)] bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] border border-[var(--color-border-subtle)]">
-                {bill.bill_id}
-              </span>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={handleDownloadPdf}
+                  disabled={downloadingPdf}
+                  className="btn-base btn-outline text-xs"
+                >
+                  {downloadingPdf ? (
+                    <Loader2 className="w-4 h-4 anim-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
+                  <span>{downloadingPdf ? 'Generating...' : 'Download'}</span>
+                </button>
+                <span className="font-mono text-xs px-2.5 py-1 rounded-[var(--radius-sm)] bg-[var(--color-surface-muted)] text-[var(--color-text-primary)] border border-[var(--color-border-subtle)]">
+                  {bill.bill_id}
+                </span>
+              </div>
             )}
           </div>
 

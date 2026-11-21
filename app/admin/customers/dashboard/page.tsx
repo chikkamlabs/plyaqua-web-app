@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminHeader from '@/components/admin/header';
 import AdminSidebar from '@/components/admin/sidebar';
-import { getCustomers, Customer } from '@/lib/customersStore';
+import { getCustomers, Customer, downloadCustomersExcel } from '@/lib/customersStore';
 import {
   UserCheck,
   Search,
@@ -13,6 +13,7 @@ import {
   DollarSign,
   Loader2,
   Users,
+  Download,
 } from 'lucide-react';
 
 export default function CustomersDashboardPage() {
@@ -83,6 +84,16 @@ export default function CustomersDashboardPage() {
                 Customers
               </h1>
             </div>
+
+            <button
+              type="button"
+              onClick={() => downloadCustomersExcel(filteredCustomers)}
+              disabled={loading || filteredCustomers.length === 0}
+              className="btn-base btn-outline shadow-xs self-start sm:self-auto"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download</span>
+            </button>
           </div>
 
           {/* Stats: Total Customers (count) */}

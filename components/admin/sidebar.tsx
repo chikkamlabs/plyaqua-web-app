@@ -15,6 +15,8 @@ import {
   History,
   CircleDollarSign,
   Sparkles,
+  Truck,
+  CreditCard,
   X,
 } from 'lucide-react';
 
@@ -38,7 +40,10 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     { name: 'Marketing campaigns', href: '/admin/campaigns', icon: Sparkles },
     { name: 'Cashback sessions', href: '/admin/cashbacksessions', icon: CircleDollarSign },
     { name: 'partner categories', href: '/admin/partnercategories', icon: FolderTree },
+    { name: 'customer points', href: '/admin/customer-points', icon: Coins },
     { name: 'Game Play', href: '/admin/gameplay', icon: Gamepad2 },
+    { name: 'Distributors', href: '/admin/distributors', icon: Truck },
+    { name: 'Subscription Plans', href: '/admin/subscripitonplans', icon: CreditCard },
   ];
 
   return (
@@ -46,7 +51,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       {/* Mobile Backdrop Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 lg:hidden transition-opacity"
+          className="fixed top-16 right-0 bottom-0 left-0 z-20 lg:hidden transition-opacity"
           style={{ backgroundColor: 'rgba(11, 37, 58, 0.45)', backdropFilter: 'blur(2px)' }}
           onClick={onClose}
           aria-hidden="true"
@@ -55,7 +60,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-64 border-r flex flex-col transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 ${
+        className={`fixed top-16 bottom-0 left-0 z-30 w-64 border-r flex flex-col transition-transform duration-200 ease-in-out lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:z-20 lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{
@@ -111,7 +116,11 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               (item.href === '/admin/customerpointsreq' &&
                 (pathname === '/admin/customerpointsreq' || pathname?.startsWith('/admin/customerpointsreq'))) ||
               (item.href === '/admin/adv-content' &&
-                (pathname === '/admin/adv-content' || pathname?.startsWith('/admin/adv-content')));
+                (pathname === '/admin/adv-content' || pathname?.startsWith('/admin/adv-content'))) ||
+              (item.href === '/admin/distributors' &&
+                (pathname === '/admin/distributors' || pathname?.startsWith('/admin/distributors'))) ||
+              (item.href === '/admin/subscripitonplans' &&
+                (pathname === '/admin/subscripitonplans' || pathname?.startsWith('/admin/subscripitonplans')));
 
             return (
               <a

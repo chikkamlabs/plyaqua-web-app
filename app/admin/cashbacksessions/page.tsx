@@ -8,6 +8,7 @@ import {
   updateCashbackSessionStatus,
   getTodayDateString,
   CashbackSessionItem,
+  downloadCashbackSessionsExcel,
 } from '@/lib/cashbacksessionStore';
 import {
   CircleDollarSign,
@@ -23,6 +24,7 @@ import {
   QrCode,
   IndianRupee,
   Receipt,
+  Download,
 } from 'lucide-react';
 
 const STATUS_OPTIONS = [
@@ -161,6 +163,16 @@ export default function CashbackSessionsPage() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                onClick={() => downloadCashbackSessionsExcel(sessions)}
+                disabled={loading || sessions.length === 0}
+                className="btn-base btn-outline text-xs py-2 px-3 flex items-center gap-1.5"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={handleResetFilters}
                 className="btn-base btn-outline text-xs py-2 px-3 flex items-center gap-1.5"
               >
@@ -258,7 +270,7 @@ export default function CashbackSessionsPage() {
                     className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight block mt-0.5"
                     style={{ color: 'var(--color-secondary)' }}
                   >
-                    {loading ? '...' : `$${totalSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                    {loading ? '...' : `₹${totalSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                   </span>
                 </div>
               </div>
@@ -458,7 +470,7 @@ export default function CashbackSessionsPage() {
                                   className="text-base font-extrabold font-mono"
                                   style={{ color: 'var(--color-secondary)' }}
                                 >
-                                  ${item.cashback_amnt.toFixed(2)}
+                                  ₹{item.cashback_amnt.toFixed(2)}
                                 </span>
                                 <span
                                   className="text-[11px] block mt-0.5"
@@ -598,7 +610,7 @@ export default function CashbackSessionsPage() {
                               className="text-lg font-extrabold font-mono"
                               style={{ color: 'var(--color-secondary)' }}
                             >
-                              ${item.cashback_amnt.toFixed(2)}
+                              ₹{item.cashback_amnt.toFixed(2)}
                             </span>
                             <span
                               className="text-[10px] block mt-0.5"

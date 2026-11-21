@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminHeader from '@/components/admin/header';
 import AdminSidebar from '@/components/admin/sidebar';
-import { getBills, Bill } from '@/lib/billssStore';
+import { getBills, Bill, downloadBillsExcel } from '@/lib/billssStore';
 import { getPartnerCategories, PartnerCategory } from '@/lib/partnercategories';
 import {
   Receipt,
@@ -16,6 +16,7 @@ import {
   Loader2,
   DollarSign,
   TrendingUp,
+  Download,
 } from 'lucide-react';
 
 export default function BillsDashboardPage() {
@@ -138,15 +139,28 @@ export default function BillsDashboardPage() {
               </h1>
             </div>
 
-            {/* Add Bill Button: links to app/admin/bills/addbill/page.tsx */}
-            <button
-              type="button"
-              onClick={() => router.push('/admin/bills/addbill')}
-              className="btn-base btn-primary shadow-xs"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Bill</span>
-            </button>
+            {/* Download & Add Bill Buttons */}
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+              <button
+                type="button"
+                onClick={() => downloadBillsExcel(filteredBills)}
+                disabled={loading || filteredBills.length === 0}
+                className="btn-base btn-outline shadow-xs"
+              >
+                <Download className="w-4 h-4" />
+                <span>Download</span>
+              </button>
+
+              {/* Add Bill Button: links to app/admin/bills/addbill/page.tsx */}
+              <button
+                type="button"
+                onClick={() => router.push('/admin/bills/addbill')}
+                className="btn-base btn-primary shadow-xs"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Bill</span>
+              </button>
+            </div>
           </div>
 
           {/* Stats: Total Bills (today count) */}

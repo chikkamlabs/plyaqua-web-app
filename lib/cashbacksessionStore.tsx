@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 import { supabase } from './supabase';
 
 export type CashbackStatus = 'pending' | 'processing' | 'completed' | 'rejected' | 'failed';
@@ -366,4 +367,37 @@ export async function updateCashbackSessionStatus(
       error: err instanceof Error ? err : new Error('Failed to update cashback session status'),
     };
   }
+}
+
+/**
+ * Download filtered cashback sessions as an Excel (.xlsx) file
+ */
+export function downloadCashbackSessionsExcel(sessions: CashbackSessionItem[]): void {
+  const rows = sessions.map((s) => ({
+    'customer name': s.customer_name || 'Customer',
+    mobile: s.customer_mobile || '',
+    amount: Number(s.cashback_amnt) || 0,
+    'upi id': s.upi_id || '',
+    status: s.status || '',
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Cashback Sessions');
+
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'cashback_sessions.xlsx';
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

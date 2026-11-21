@@ -102,11 +102,18 @@ export default function PartnerDashboardPage() {
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-lg sm:max-w-4xl mx-auto px-4 py-4 sm:py-6 pb-28 space-y-6">
-        {/* Top Right: Points with Coins Icon (Available Points) */}
-        <div className="flex justify-end items-center">
+        {/* Top Row: Tagline on left + Points with Coins Icon on right */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p
+            className="text-xs sm:text-sm font-semibold"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            Sale more, Earn More rewards
+          </p>
+
           <Link
             href="/partner/points"
-            className="card-interactive inline-flex items-center gap-2.5 px-4 py-2 rounded-[var(--radius-full)] border shadow-xs transition-transform hover:scale-105 focus:outline-none"
+            className="card-interactive inline-flex items-center gap-2.5 px-4 py-2 rounded-[var(--radius-full)] border shadow-xs transition-transform hover:scale-105 focus:outline-none shrink-0"
             style={{
               backgroundColor: 'var(--color-surface)',
               borderColor: 'var(--color-border)',

@@ -20,7 +20,7 @@ export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
 
   return (
     <header
-      className="sticky top-0 z-30 h-16 border-b px-4 sm:px-6 flex items-center justify-between"
+      className="sticky top-0 z-40 h-16 border-b px-4 sm:px-6 flex items-center justify-between"
       style={{
         backgroundColor: 'var(--color-surface)',
         borderColor: 'var(--color-border)',

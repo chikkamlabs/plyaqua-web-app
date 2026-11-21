@@ -321,10 +321,12 @@ export default function SaleCard({
                     placeholder="Search product by name, size or SKU..."
                     value={productSearch}
                     onChange={(e) => setProductSearch(e.target.value)}
-                    className="input-base pl-9 pr-8 text-xs py-2 w-full"
+                    className="input-base text-xs py-2 w-full"
                     style={{
                       backgroundColor: 'var(--color-background)',
                       borderColor: 'var(--color-border)',
+                      paddingLeft: '2.5rem',
+                      paddingRight: '2.25rem',
                     }}
                   />
                   {productSearch && (
@@ -435,12 +437,12 @@ export default function SaleCard({
                 </div>
 
                 {/* - 1 + Stepper Controls */}
-                <div className="flex items-center gap-3 mt-1.5">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1.5">
                   <button
                     type="button"
                     onClick={handleDecreaseQty}
                     disabled={Number(saleQty) <= 1}
-                    className="w-10 h-10 rounded-[var(--radius-md)] border flex items-center justify-center font-bold text-base transition-colors hover:bg-slate-100 disabled:opacity-40 shrink-0"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-[var(--radius-md)] border flex items-center justify-center font-bold text-base transition-colors hover:bg-slate-100 disabled:opacity-40 shrink-0"
                     style={{
                       backgroundColor: 'var(--color-surface)',
                       borderColor: 'var(--color-border)',
@@ -469,8 +471,10 @@ export default function SaleCard({
                     }}
                     placeholder="1"
                     required
-                    className="input-base text-center font-mono font-bold text-sm sm:text-base h-10 w-24 shrink-0"
+                    className="input-base text-center font-mono font-bold text-sm sm:text-base h-9 sm:h-10 min-w-0"
                     style={{
+                      width: '5rem',
+                      padding: '0.375rem 0.5rem',
                       backgroundColor: 'var(--color-surface)',
                       borderColor: 'var(--color-border)',
                     }}
@@ -480,7 +484,7 @@ export default function SaleCard({
                     type="button"
                     onClick={handleIncreaseQty}
                     disabled={currentItem ? Number(saleQty) >= currentItem.qty : false}
-                    className="w-10 h-10 rounded-[var(--radius-md)] border flex items-center justify-center font-bold text-base transition-colors hover:bg-slate-100 disabled:opacity-40 shrink-0"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-[var(--radius-md)] border flex items-center justify-center font-bold text-base transition-colors hover:bg-slate-100 disabled:opacity-40 shrink-0"
                     style={{
                       backgroundColor: 'var(--color-surface)',
                       borderColor: 'var(--color-border)',

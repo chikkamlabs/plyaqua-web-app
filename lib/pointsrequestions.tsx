@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 import { supabase } from './supabase';
 
 export type CuspntreqStatus = 'pending' | 'processing' | 'completed' | 'rejected' | 'cancelled';
@@ -359,4 +360,38 @@ export async function updateCustomerPointReq(
     const error = err instanceof Error ? err : new Error('Failed to update request');
     return { success: false, error };
   }
+}
+
+/**
+ * Download filtered customer points requests as an Excel (.xlsx) file
+ */
+export function downloadCustomerPointReqsExcel(requests: CustomerPointReq[]): void {
+  const rows = requests.map((r) => ({
+    'customer name': r.customer_name || 'Customer',
+    mobile: r.customer_mobile || '',
+    points: Number(r.points) || 0,
+    date: r.created_at ? r.created_at.split('T')[0] : '',
+    status: r.status,
+    notes: r.notes || '',
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Points Requests');
+
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'customer_points_requests.xlsx';
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

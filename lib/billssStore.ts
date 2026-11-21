@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx';
 import { supabase } from './supabase';
 import { getPartners } from './partnersStore';
 import { getProducts } from './productsStore';
@@ -529,4 +530,37 @@ export async function updateBill(
       error: err instanceof Error ? err : new Error('Failed to update bill'),
     };
   }
+}
+
+/**
+ * Download displayed/filtered bills as an Excel (.xlsx) file
+ */
+export function downloadBillsExcel(bills: Bill[]): void {
+  const rows = bills.map((b) => ({
+    bill_id: b.bill_id,
+    partner_name: b.partner_name || 'Partner',
+    amount: Number(b.amount) || 0,
+    bill_date: b.bill_date || '',
+    total_items: b.items ? b.items.length : 0,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Bills');
+
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'bills.xlsx';
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

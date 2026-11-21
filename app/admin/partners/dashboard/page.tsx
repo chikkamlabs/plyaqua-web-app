@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import * as XLSX from 'xlsx';
 import AdminHeader from '@/components/admin/header';
 import AdminSidebar from '@/components/admin/sidebar';
 import AddPartner from '@/components/admin/addpartner';
@@ -11,6 +12,7 @@ import {
   Users,
   Search,
   UserPlus,
+  Download,
   ExternalLink,
   Store,
   Loader2,
@@ -99,6 +101,36 @@ export default function PartnersDashboardPage() {
     setIsAddOpen(false);
   };
 
+  const handleDownloadExcel = () => {
+    const rows = filteredPartners.map((p) => ({
+      partner_id: p.partner_id,
+      name: p.name,
+      mobile: p.mobile || '',
+      points: p.available_points ?? 0,
+      credit: p.credit_amount ?? 0,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Partners');
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'partners.xlsx';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
   const selectedCategoryObj = categories.find((c) => c.id === selectedCategoryFilter);
 
   return (
@@ -132,15 +164,27 @@ export default function PartnersDashboardPage() {
               </h1>
             </div>
 
-            {/* Add Partner Button */}
-            <button
-              type="button"
-              onClick={() => setIsAddOpen(true)}
-              className="btn-base btn-primary shadow-xs"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Add Partner</span>
-            </button>
+            {/* Download & Add Partner Buttons */}
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+              <button
+                type="button"
+                onClick={handleDownloadExcel}
+                disabled={loading || filteredPartners.length === 0}
+                className="btn-base btn-outline shadow-xs"
+              >
+                <Download className="w-4 h-4" />
+                <span>Download</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsAddOpen(true)}
+                className="btn-base btn-primary shadow-xs"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Add Partner</span>
+              </button>
+            </div>
           </div>
 
           {/* Stats: Total Partners (count) */}

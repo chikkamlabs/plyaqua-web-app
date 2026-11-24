@@ -514,7 +514,7 @@ export default function PartnersDashboardPage() {
                           )}
                         </td>
 
-                        {/* Actions column: Stock, Transactions, Open */}
+                        {/* Actions column: Stock, Transactions, Points, Open */}
                         <td className="table-cell text-right">
                           <div className="flex items-center justify-end gap-1.5 flex-wrap sm:flex-nowrap">
                             {/* Stock button */}
@@ -537,6 +537,17 @@ export default function PartnersDashboardPage() {
                             >
                               <Receipt className="w-3.5 h-3.5 text-[var(--color-primary)]" />
                               <span>Transactions</span>
+                            </button>
+
+                            {/* Points button */}
+                            <button
+                              type="button"
+                              onClick={() => router.push(`/admin/partners/points?partnerId=${partner.id}`)}
+                              className="btn-base btn-outline text-xs py-1 px-2.5"
+                              title="View partner points and ledger"
+                            >
+                              <Coins className="w-3.5 h-3.5 text-[var(--color-warning)]" />
+                              <span>Points</span>
                             </button>
 
                             {/* Open button */}

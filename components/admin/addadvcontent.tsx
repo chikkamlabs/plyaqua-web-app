@@ -34,6 +34,8 @@ export default function AddAdvContent({
   const [mediaType, setMediaType] = useState<MediaType>('image');
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploadedMediaUrl, setUploadedMediaUrl] = useState<string | null>(null);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,10 +44,37 @@ export default function AddAdvContent({
 
   if (!isOpen) return null;
 
+  const resetForm = () => {
+    setTitle('');
+    setMediaType('image');
+    setFile(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl(null);
+    setUploadedMediaUrl(null);
+    setUploadingMedia(false);
+    setUploading(false);
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
   const handleMediaTypeChange = (type: MediaType) => {
     setMediaType(type);
     setFile(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setPreviewUrl(null);
+    setUploadedMediaUrl(null);
+    setError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -66,9 +95,13 @@ export default function AddAdvContent({
       return;
     }
 
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setFile(selectedFile);
     const objectUrl = URL.createObjectURL(selectedFile);
     setPreviewUrl(objectUrl);
+    setUploadedMediaUrl(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,19 +122,30 @@ export default function AddAdvContent({
     setUploading(true);
 
     try {
-      // 1. Upload to dedicated Supabase storage bucket (adv_content_img or adv_content_vid)
-      const uploadRes = await uploadAdMedia(file, mediaType);
-      if (uploadRes.error || !uploadRes.url) {
-        setError(uploadRes.error?.message || 'Failed to upload media file.');
-        setUploading(false);
-        return;
+      let finalMediaUrl = uploadedMediaUrl;
+
+      // 1. Upload video to adv_content_vid (or image to adv_content_img) first
+      if (!finalMediaUrl) {
+        setUploadingMedia(true);
+        const uploadRes = await uploadAdMedia(file, mediaType);
+        setUploadingMedia(false);
+        if (uploadRes.error || !uploadRes.url) {
+          setError(
+            uploadRes.error?.message ||
+              `Failed to upload ${mediaType} to ${mediaType === 'video' ? 'adv_content_vid' : 'adv_content_img'}.`
+          );
+          setUploading(false);
+          return;
+        }
+        finalMediaUrl = uploadRes.url;
+        setUploadedMediaUrl(finalMediaUrl);
       }
 
-      // 2. Save record into public.ad_content with status = 'active'
+      // 2. Store the uploaded bucket URL in ad_content.media_url with status = 'active'
       const createRes = await createAdContent({
         title: trimmedTitle,
         media_type: mediaType,
-        media_url: uploadRes.url,
+        media_url: finalMediaUrl,
         status: 'active',
       });
 
@@ -113,8 +157,9 @@ export default function AddAdvContent({
       }
 
       onContentCreated(createRes.data);
-      onClose();
+      handleClose();
     } catch (err) {
+      setUploadingMedia(false);
       setUploading(false);
       setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     }
@@ -123,7 +168,7 @@ export default function AddAdvContent({
   return (
     <div
       className="dialog-overlay z-50 p-3 sm:p-6 anim-fade-in"
-      onClick={onClose}
+      onClick={handleClose}
       role="dialog"
       aria-modal="true"
     >
@@ -167,7 +212,7 @@ export default function AddAdvContent({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 rounded-[var(--radius-md)] transition-colors hover:bg-slate-100"
             style={{ color: 'var(--color-text-muted)' }}
             aria-label="Close modal"
@@ -200,9 +245,15 @@ export default function AddAdvContent({
             >
               Ad Content Title *
             </label>
-            <div className="relative">
+            <div
+              className="flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-md)] border transition-colors focus-within:border-[var(--color-secondary)] focus-within:ring-[3px] focus-within:ring-[rgba(18,184,176,0.15)]"
+              style={{
+                backgroundColor: 'var(--color-background)',
+                borderColor: 'var(--color-border)',
+              }}
+            >
               <FileText
-                className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"
+                className="w-4 h-4 shrink-0 pointer-events-none"
                 style={{ color: 'var(--color-text-muted)' }}
               />
               <input
@@ -211,10 +262,9 @@ export default function AddAdvContent({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                className="input-base pl-9 text-xs sm:text-sm py-2"
+                className="w-full bg-transparent border-0 outline-none focus:ring-0 text-xs sm:text-sm p-0"
                 style={{
-                  backgroundColor: 'var(--color-background)',
-                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text-primary)',
                 }}
               />
             </div>
@@ -365,11 +415,26 @@ export default function AddAdvContent({
                   )}
 
                   <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-emerald-600">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span className="truncate max-w-xs">{file?.name}</span>
+                    {uploadingMedia ? (
+                      <>
+                        <Loader2 className="w-4 h-4 anim-spin text-[var(--color-secondary)]" />
+                        <span className="text-[var(--color-secondary)]">
+                          Uploading to {mediaType === 'video' ? 'adv_content_vid' : 'adv_content_img'}...
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span className="truncate max-w-xs">{file?.name}</span>
+                      </>
+                    )}
                   </div>
                   <p className="text-[11px] text-[var(--color-text-muted)]">
-                    Tap to replace file
+                    {uploadingMedia
+                      ? 'Please wait for upload to complete'
+                      : uploadedMediaUrl
+                      ? `Uploaded to ${mediaType === 'video' ? 'adv_content_vid' : 'adv_content_img'} • Tap to replace`
+                      : 'Tap to replace file'}
                   </p>
                 </div>
               ) : (
@@ -428,7 +493,7 @@ export default function AddAdvContent({
             </button>
             <button
               type="submit"
-              disabled={uploading || !file || !title.trim()}
+              disabled={uploading || uploadingMedia || !file || !title.trim()}
               className="btn-base btn-primary text-xs py-2 px-5 flex items-center gap-2"
             >
               {uploading ? (

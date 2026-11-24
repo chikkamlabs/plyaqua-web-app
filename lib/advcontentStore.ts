@@ -120,15 +120,11 @@ export async function uploadAdMedia(
       .upload(filePath, file, {
         cacheControl: '3600',
         upsert: false,
+        contentType: file.type || (mediaType === 'video' ? 'video/mp4' : 'image/png'),
       });
 
     if (uploadError) {
-      console.warn(`Supabase storage upload error in ${bucket}:`, uploadError.message);
-      // Fallback to local blob URL if bucket permissions are not yet configured
-      if (typeof window !== 'undefined') {
-        return { url: URL.createObjectURL(file), error: null };
-      }
-      return { url: null, error: new Error(uploadError.message) };
+      return { url: null, error: new Error(`Storage upload failed (${bucket}): ${uploadError.message}`) };
     }
 
     const { data: publicUrlData } = supabase.storage
@@ -137,10 +133,6 @@ export async function uploadAdMedia(
 
     return { url: publicUrlData.publicUrl, error: null };
   } catch (err) {
-    console.warn('Upload error, fallback to blob URL:', err);
-    if (typeof window !== 'undefined') {
-      return { url: URL.createObjectURL(file), error: null };
-    }
     return {
       url: null,
       error: err instanceof Error ? err : new Error('Failed to upload media file'),

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Home,
@@ -36,6 +37,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     { name: 'Products', href: '/admin/products', icon: Package },
     { name: 'Points Session', href: '/admin/pointssession', icon: History },
     { name: 'Customer Points Reqs', href: '/admin/customerpointsreq', icon: Coins },
+    { name: 'Partner Points Requests', href: '/admin/partnerpointsreqs', icon: Coins },
     { name: 'Ads Content', href: '/admin/adv-content', icon: Megaphone },
     { name: 'Marketing campaigns', href: '/admin/campaigns', icon: Sparkles },
     { name: 'Cashback sessions', href: '/admin/cashbacksessions', icon: CircleDollarSign },
@@ -115,6 +117,9 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 (pathname === '/admin/cashbacksessions' || pathname?.startsWith('/admin/cashbacksessions'))) ||
               (item.href === '/admin/customerpointsreq' &&
                 (pathname === '/admin/customerpointsreq' || pathname?.startsWith('/admin/customerpointsreq'))) ||
+              (item.href === '/admin/partnerpointsreqs' &&
+                (pathname === '/admin/partnerpointsreqs' ||
+                  pathname?.startsWith('/admin/partnerpointsreqs'))) ||
               (item.href === '/admin/adv-content' &&
                 (pathname === '/admin/adv-content' || pathname?.startsWith('/admin/adv-content'))) ||
               (item.href === '/admin/distributors' &&
@@ -123,7 +128,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 (pathname === '/admin/subscripitonplans' || pathname?.startsWith('/admin/subscripitonplans')));
 
             return (
-              <a
+              <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => {
@@ -152,7 +157,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                   }}
                 />
                 <span className="capitalize">{item.name}</span>
-              </a>
+              </Link>
             );
           })}
         </div>

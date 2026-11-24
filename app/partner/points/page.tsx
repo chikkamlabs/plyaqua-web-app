@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import PartnerHeader from '@/components/partner/header';
 import PartnerBottomNavigation from '@/components/partner/bottomnavigation';
+import PartnerPointsReqModal from '@/components/partnerpointsreq';
 import {
   getPartnerPointsSummary,
   getPartnerPointTransactions,
@@ -11,6 +12,11 @@ import {
   PartnerPointsSummary,
   PartnerPointTransaction,
 } from '@/lib/pointsStore';
+import {
+  getMyPartnerPointReqs,
+  PartnerPointReq,
+  PartnerPointReqStatus,
+} from '@/lib/partnerpointsStore';
 import {
   ArrowLeft,
   Coins,
@@ -23,6 +29,11 @@ import {
   Receipt,
   ChevronDown,
   ChevronUp,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  FileText,
 } from 'lucide-react';
 
 export default function PartnerPointsPage() {
@@ -44,18 +55,31 @@ export default function PartnerPointsPage() {
   // Expanded note tracking by transaction id
   const [expandedNotes, setExpandedNotes] = useState<Record<string, boolean>>({});
 
-  // Load points summary once
+  // Redeem Points Modal & Partner Points Requests state
+  const [isRedeemOpen, setIsRedeemOpen] = useState<boolean>(false);
+  const [pointReqs, setPointReqs] = useState<PartnerPointReq[]>([]);
+  const [reqsLoading, setReqsLoading] = useState<boolean>(true);
+
+  // Load points summary and partner_points_reqs once
   useEffect(() => {
     let isMounted = true;
-    async function loadSummary() {
-      const res = await getPartnerPointsSummary();
+    async function loadSummaryAndReqs() {
+      const [summaryRes, reqsRes] = await Promise.all([
+        getPartnerPointsSummary(),
+        getMyPartnerPointReqs(),
+      ]);
       if (!isMounted) return;
-      if (res.data) {
-        setSummary(res.data);
+      if (summaryRes.data) {
+        setSummary(summaryRes.data);
       }
       setSummaryLoading(false);
+
+      if (reqsRes.data) {
+        setPointReqs(reqsRes.data);
+      }
+      setReqsLoading(false);
     }
-    loadSummary();
+    loadSummaryAndReqs();
     return () => {
       isMounted = false;
     };
@@ -94,6 +118,42 @@ export default function PartnerPointsPage() {
     }));
   };
 
+  const getReqStatusStyle = (status: PartnerPointReqStatus) => {
+    switch (status) {
+      case 'completed':
+        return {
+          chipClass: 'status-chip-active',
+          icon: CheckCircle2,
+          label: 'Completed',
+        };
+      case 'processing':
+        return {
+          chipClass: 'status-chip-pending',
+          icon: Clock,
+          label: 'Processing',
+        };
+      case 'pending':
+        return {
+          chipClass: 'status-chip-pending',
+          icon: AlertCircle,
+          label: 'Pending',
+        };
+      case 'rejected':
+      case 'cancelled':
+        return {
+          chipClass: 'status-chip-danger',
+          icon: XCircle,
+          label: status === 'rejected' ? 'Rejected' : 'Cancelled',
+        };
+      default:
+        return {
+          chipClass: 'status-chip-inactive',
+          icon: AlertCircle,
+          label: status,
+        };
+    }
+  };
+
   return (
     <div
       className="min-h-screen flex flex-col"
@@ -115,16 +175,26 @@ export default function PartnerPointsPage() {
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Dashboard</span>
           </button>
-          <span
-            className="text-[11px] font-semibold px-2 py-0.5 rounded-[var(--radius-sm)] border"
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              borderColor: 'var(--color-border)',
-              color: 'var(--color-text-secondary)',
-            }}
-          >
-            Points Ledger
-          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsRedeemOpen(true)}
+              className="btn-base btn-primary text-xs py-1 px-2.5"
+            >
+              <Coins className="w-3.5 h-3.5" />
+              <span>Redeem points</span>
+            </button>
+            <span
+              className="text-[11px] font-semibold px-2 py-0.5 rounded-[var(--radius-sm)] border"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                borderColor: 'var(--color-border)',
+                color: 'var(--color-text-secondary)',
+              }}
+            >
+              Points Ledger
+            </span>
+          </div>
         </div>
 
         <div>
@@ -510,7 +580,139 @@ export default function PartnerPointsPage() {
             </div>
           )}
         </div>
+
+        {/* 4. Partner Points Redemption Requests (partner_points_reqs: points, date, status, notes) */}
+        <div className="space-y-2 sm:space-y-3 pt-1">
+          <div className="flex items-center justify-between px-0.5">
+            <h2
+              className="text-xs sm:text-sm font-bold uppercase tracking-wider"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              Redeem Requests ({pointReqs.length})
+            </h2>
+          </div>
+
+          {reqsLoading ? (
+            <div
+              className="card-base p-8 text-center rounded-[var(--radius-lg)] border"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                borderColor: 'var(--color-border)',
+              }}
+            >
+              <Loader2
+                className="w-6 h-6 anim-spin mx-auto mb-2"
+                style={{ color: 'var(--color-secondary)' }}
+              />
+              <p
+                className="text-xs font-medium"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Loading redemption requests...
+              </p>
+            </div>
+          ) : pointReqs.length === 0 ? (
+            <div
+              className="card-base p-6 text-center rounded-[var(--radius-lg)] border border-dashed space-y-1.5"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                borderColor: 'var(--color-border)',
+              }}
+            >
+              <Coins
+                className="w-8 h-8 mx-auto"
+                style={{ color: 'var(--color-text-muted)' }}
+              />
+              <p
+                className="text-xs sm:text-sm font-semibold"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                No redemption requests yet
+              </p>
+              <p
+                className="text-[11px] max-w-xs mx-auto"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                Tap &quot;Redeem points&quot; above to submit a new request.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2 sm:space-y-3">
+              {pointReqs.map((req) => {
+                const statusStyle = getReqStatusStyle(req.status);
+                const StatusIcon = statusStyle.icon;
+                const formattedDate = req.created_at
+                  ? new Date(req.created_at).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  : '—';
+
+                return (
+                  <div
+                    key={req.id}
+                    className="card-base p-3 sm:p-4 rounded-[var(--radius-lg)] border space-y-2"
+                    style={{
+                      backgroundColor: 'var(--color-surface)',
+                      borderColor: 'var(--color-border)',
+                    }}
+                  >
+                    <div
+                      className="flex items-center justify-between gap-2 pb-2 border-b"
+                      style={{ borderColor: 'var(--color-border-subtle)' }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="text-sm sm:text-base font-mono font-extrabold"
+                          style={{ color: 'var(--color-primary)' }}
+                        >
+                          {req.points.toLocaleString()} pts
+                        </span>
+                        <span
+                          className="text-[11px] sm:text-xs flex items-center gap-1"
+                          style={{ color: 'var(--color-text-muted)' }}
+                        >
+                          <Calendar className="w-3 h-3" />
+                          <span>{formattedDate}</span>
+                        </span>
+                      </div>
+
+                      <span className={`status-chip ${statusStyle.chipClass} text-[10px]`}>
+                        <StatusIcon className="w-3 h-3" />
+                        <span>{statusStyle.label}</span>
+                      </span>
+                    </div>
+
+                    <div className="flex items-start gap-1.5 text-xs">
+                      <FileText
+                        className="w-3.5 h-3.5 mt-0.5 shrink-0"
+                        style={{ color: 'var(--color-text-muted)' }}
+                      />
+                      <p
+                        className="text-xs leading-relaxed"
+                        style={{ color: 'var(--color-text-secondary)' }}
+                      >
+                        {req.notes || '—'}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </main>
+
+      {/* Redeem Points Modal */}
+      <PartnerPointsReqModal
+        isOpen={isRedeemOpen}
+        onClose={() => setIsRedeemOpen(false)}
+        availablePoints={summary?.available_points ?? 0}
+        onRequestCreated={(newReq) => {
+          setPointReqs((prev) => [newReq, ...prev]);
+        }}
+      />
 
       {/* Bottom navigation connected at bottom */}
       <PartnerBottomNavigation />
